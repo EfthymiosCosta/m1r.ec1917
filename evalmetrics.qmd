@@ -199,7 +199,7 @@ The following steps are used for computing the Gap statistic:
    $$
    
 The above steps are repeated for several $K$ values. The number of clusters is selected to be
-either the value of $K$ for which $\text{Gap}(K)$ is maximised, or the minimum $K$ value for which
+either the value of $K$ for which $\text{Gap}(K)$ is maximised, or the smallest value of $K$ for which
 $\text{Gap}(K) \geq \text{Gap}(K+1) − \text{sd}(K+1)$.
 
 Good news is you do not need to compute the Gap statistic manually *(although this would be a fun coding exercise)*.
