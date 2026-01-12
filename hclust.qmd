@@ -25,7 +25,7 @@ The theory and implementations described below refer to agglomerative hierarchic
 
 We present the steps used to perform hierarchical agglomerative clustering below:
 
-1.  **Initialise:** Initialise $n$ clusters $C_1 = \{ \mathbf{x}_1\}, \ldots, C_n = \{\mathbf{x}_n\}$ and $t \leftarrow 1$.
+1.  **Initialise:** Initialise $n$ clusters $C_1 = \{ 1\}, \ldots, C_n = \{n\}$ and $t \leftarrow 1$.
 2.  **Compute dissimilarities**: Construct dissimilarity/distance matrix $D^{(0)}$ with $D^{(0)}_{i,j} = d(\mathbf{x}_i, \mathbf{x}_j)$ for a dissimilarity/distance function $d$.
 3.  **Recursive steps:** Repeat the following steps until $t = n-1$:
 
