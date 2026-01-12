@@ -39,7 +39,7 @@ We present the steps used to perform hierarchical agglomerative clustering below
 
 <!-- -->
 
-3.  **Output:** Cluster hierarchy.
+4.  **Output:** Cluster hierarchy.
 
 ::: funfact-box
 💡 **Fun fact**
