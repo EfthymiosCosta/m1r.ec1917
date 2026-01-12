@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4. Number Of Clusters &amp; Evaluation – A First Tutorial on Cluster Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f93c2b1f3f0577f377aefa4848a86a36.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+MathJax = {
+  tex: {
+    macros: {
+      argmax: ['\\operatorname*{arg\\,max}', 1],
+      argmin: ['\\operatorname*{arg\\,min}', 1]
+    }
+  }
+};
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">A First Tutorial on Cluster Analysis</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">0. Introduction: What is clustering?</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./dists.html"> 
+<span class="menu-text">1. Distances &amp; Dissimilarities</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./kmeans_pam.html"> 
+<span class="menu-text">2. Partitional Clustering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./hclust.html"> 
+<span class="menu-text">3. Hierarchical Clustering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./evalmetrics.html" aria-current="page"> 
+<span class="menu-text">4. Number Of Clusters &amp; Evaluation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./projectideas.html"> 
+<span class="menu-text">Project Ideas</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-elbow-method" id="toc-the-elbow-method" class="nav-link active" data-scroll-target="#the-elbow-method">The Elbow Method</a></li>
+  <li><a href="#intrinsic-evaluation-metrics" id="toc-intrinsic-evaluation-metrics" class="nav-link" data-scroll-target="#intrinsic-evaluation-metrics">Intrinsic Evaluation Metrics</a></li>
+  <li><a href="#silhouette-coefficient" id="toc-silhouette-coefficient" class="nav-link" data-scroll-target="#silhouette-coefficient">Silhouette Coefficient</a></li>
+  <li><a href="#gap-statistic" id="toc-gap-statistic" class="nav-link" data-scroll-target="#gap-statistic">Gap Statistic</a></li>
+  <li><a href="#extrinsic-evaluation-metrics" id="toc-extrinsic-evaluation-metrics" class="nav-link" data-scroll-target="#extrinsic-evaluation-metrics">Extrinsic Evaluation Metrics</a></li>
+  <li><a href="#adjusted-rand-index" id="toc-adjusted-rand-index" class="nav-link" data-scroll-target="#adjusted-rand-index">(Adjusted) Rand Index</a></li>
+  <li><a href="#visualisations" id="toc-visualisations" class="nav-link" data-scroll-target="#visualisations">Visualisations</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">4. Number Of Clusters &amp; Evaluation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>One of the most challenging problems in cluster analysis is estimating the number of clusters <span class="math inline">\(K\)</span>. Several ideas have been proposed in the literature; we present some of the most commonly used ones here.</p>
+<section id="the-elbow-method" class="level2">
+<h2 class="anchored" data-anchor-id="the-elbow-method">The Elbow Method</h2>
+<p>Let us take the <code>iris</code> data set and perform K-means clustering with <span class="math inline">\(K = 2, 3, \ldots, 8\)</span> and record the within-cluster sum of squares for each clustering solution.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove species variables</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>iris <span class="ot">&lt;-</span> iris[, <span class="sc">-</span><span class="dv">5</span>]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialise a vector to store the within-cluster sums of squares</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>wcss <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Run K-Means with K = 2, 3, ..., 8</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (K <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>)){</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  kmeans_res <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> iris,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">centers =</span> K,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">iter.max =</span> <span class="dv">100</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                       <span class="at">nstart =</span> <span class="dv">100</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store within-cluster sum of squares</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  wcss <span class="ot">&lt;-</span> <span class="fu">c</span>(wcss, kmeans_res<span class="sc">$</span>tot.withinss)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot of the within-cluster sum of squares values against K</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>), <span class="at">y =</span> wcss,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">'b'</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">'K'</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">'Within-cluster sum of squares'</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">'Within-cluster sum of squares against number of clusters (K) on iris'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We observe a decreasing trend of the within-cluster sum of squares as <span class="math inline">\(K\)</span> increases. The <strong>elbow heuristic</strong> suggests selecting the value of <span class="math inline">\(K\)</span> corresponding to the “elbow” of the curve. The elbow of a curve is, roughly speaking, the point where the curve visibly bends from high to low slope to low slope. On the iris data set, the elbow point corresponds to <span class="math inline">\(K=3\)</span>, suggesting that 3 clusters are most appropriate.</p>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>If a curve is increasing, the analogous to an elbow point is called the <strong>knee</strong> of the curve.</p>
+</div>
+<div class="think-note">
+<p>❓ <strong>Why does this work?</strong></p>
+<p>The within-cluster sum of squares always decreases as <span class="math inline">\(K\)</span> increases. Can you explain why? Why is the elbow point of interest here? <em>(Hint: Think of what it means for the WCSS to drop sharply when going from <span class="math inline">\(K\)</span> to <span class="math inline">\(K+1\)</span> clusters and then decreasing very slowly).</em></p>
+</div>
+</section>
+<section id="intrinsic-evaluation-metrics" class="level2">
+<h2 class="anchored" data-anchor-id="intrinsic-evaluation-metrics">Intrinsic Evaluation Metrics</h2>
+<p>The elbow method is commonly criticised in the literature for several reasons, such as:</p>
+<ol type="1">
+<li>High ambiguity; what if there is no clearly visible elbow?</li>
+<li>Subjectivity; it is up to the user to decide where the elbow is.</li>
+<li>Manual inspection; the process requires user intervention, i.e.&nbsp;it is not automated.</li>
+</ol>
+<p>The need for a quantitative and more theoretically-grounded approach to selecting the number of clusters has led to the formulation of several <strong>intrinsic evaluation metrics</strong> which determine the quality of a partition by assessing some criteria. We present some of these in the Table below:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Range</th>
+<th>Higher is Better?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Silhouette Coefficient</td>
+<td><span class="math inline">\([-1, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>Gap Statistic</td>
+<td><span class="math inline">\((-\infty, \infty)\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="odd">
+<td>Calinski-Harabasz Index</td>
+<td><span class="math inline">\([0, \infty)\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>Davies-Bouldin Index</td>
+<td><span class="math inline">\([0, \infty)\)</span></td>
+<td>❌ No</td>
+</tr>
+<tr class="odd">
+<td>Dunn Index</td>
+<td><span class="math inline">\([0, \infty)\)</span></td>
+<td>✅ Yes</td>
+</tr>
+</tbody>
+</table>
+<p>There exist many more intrinsic evaluation measures; a detailed description can be found in <span class="citation" data-cites="charrad2014nbclust">Charrad et al. (<a href="#ref-charrad2014nbclust" role="doc-biblioref">2014</a>)</span> and these are implemented in the <code>NbClust</code> package in <code>R</code>. We describe two of these metrics below.</p>
+</section>
+<section id="silhouette-coefficient" class="level2">
+<h2 class="anchored" data-anchor-id="silhouette-coefficient">Silhouette Coefficient</h2>
+<p>The elbow method takes into consideration the within-cluster sum of squares. Therefore, it only accounts for compactness of the clusters. However, this tells us nothing about how well-separated the clusters are. The silhouette coefficient circumvents this shortcoming of the elbow and produces values in the range <span class="math inline">\([-1, 1]\)</span> that tell us how similar an observations is to its own cluster compared to other clusters. Assuming we run a clustering algorithm assuming <span class="math inline">\(K\)</span> clusters and <span class="math inline">\(i \in C_k\)</span>, that is, <span class="math inline">\(\mathbf{x}_{i}\)</span> is assigned to cluster <span class="math inline">\(1 \leq k \leq K\)</span>, the silhouette of observation <span class="math inline">\(i\)</span> is given by:</p>
+<p><span class="math display">\[
+s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}},
+\]</span></p>
+<p>where: <span class="math display">\[
+\begin{align*}
+a(i) &amp; = \frac{1}{\lvert C_k \rvert - 1}\sum\limits_{i' \in C_k, i' \neq i} d(\mathbf{x}_i, \mathbf{x}_{i'}), \\
+b(i) &amp; = \min\limits_{i' \neq i} \frac{1}{\lvert C_{k'}\rvert} \sum\limits_{i' \in C_{k'}} d(\mathbf{x}_i, \mathbf{x}_{i'}),
+\end{align*}
+\]</span></p>
+<p>with <span class="math inline">\(d\)</span> being the dissimilarity function used for clustering and denoting the cluster that observation <span class="math inline">\(\mathbf{x}_{i'}\)</span> is assigned to by <span class="math inline">\(C_{k'}\)</span>.</p>
+<div class="think-note">
+<p>❓ <strong>What do <span class="math inline">\(a(i)\)</span> and <span class="math inline">\(b(i)\)</span> represent?</strong></p>
+<p>Can you explain <span class="math inline">\(a(i)\)</span> and <span class="math inline">\(b(i)\)</span> in simple words?</p>
+</div>
+<p>We can compute the silhouette for all <span class="math inline">\(n\)</span> observations; the final decision is then based on the average of these silhouette values, also known as the <strong>average silhouette width</strong>.</p>
+<p>The <code>cluster</code> package allows us to visualise all silhouette values of a data set. For instance, for the iris data set and K-Means with <span class="math inline">\(K = 3\)</span>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Run k-Means on iris with K = 3</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>kmeans_res <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> iris,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">centers =</span> <span class="dv">3</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">iter.max =</span> <span class="dv">100</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nstart =</span> <span class="dv">100</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute silhouette widths</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that x must be the cluster allocation and dist is the dissimilarity matrix</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>silhouette_vals <span class="ot">&lt;-</span> <span class="fu">silhouette</span>(<span class="at">x =</span> kmeans_res<span class="sc">$</span>cluster,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                              <span class="at">dist =</span> <span class="fu">dist</span>(iris))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the silhouette values</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(silhouette_vals,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">c</span>(<span class="st">'red'</span>, <span class="st">'blue'</span>, <span class="st">'forestgreen'</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">'Silhouette widths for K-Means clustering on iris'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If you want to compute the average silhouette value for several values of <span class="math inline">\(K\)</span> and then decide the number of clusters based on the value of <span class="math inline">\(K\)</span> that maximises the average silhouette, the <code>fviz_nbclust</code> function from the <code>factoextra</code> package does exactly that and also visualises the results!</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the fviz_nbclust function to compute and visualise avg. silhouette widths</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(<span class="at">x =</span> iris,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">FUNcluster =</span> kmeans,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">"silhouette"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">k.max =</span> <span class="dv">10</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">linecolor =</span> <span class="st">'blue'</span>) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average silhouette width of K-Means solutions on iris data set"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Interestingly, this suggests that the optimal number of clusters in iris is <span class="math inline">\(K=2\)</span> and not <span class="math inline">\(K=3\)</span> that we previously got using the elbow method!</p>
+<p>It is generally recommended to use several intrinsic evaluation measures to decide the number of clusters. The silhouette may hint the presence of two clusters but other metrics may all agree on <span class="math inline">\(K=3\)</span> for instance.</p>
+</section>
+<section id="gap-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="gap-statistic">Gap Statistic</h2>
+<p>The Gap statistic is a more statistically principled way of estimating the number of clusters. It is based on the idea that if a cluster structure exists in a data set, the clusters will be significantly more compact than what you would expect from randomly distributed data.</p>
+<p>The following steps are used for computing the Gap statistic:</p>
+<ol type="1">
+<li><strong>Compute WCSS for data set:</strong>
+<ul>
+<li>Perform clustering on the data set assuming <span class="math inline">\(K\)</span> clusters.</li>
+<li>Compute the within-cluster sum of squares <span class="math inline">\(W_k\)</span>.</li>
+</ul></li>
+<li><strong>Generate reference data sets:</strong>
+<ul>
+<li>Create <span class="math inline">\(B\)</span> uniformly random data sets with the same dimensions as your data.</li>
+<li>For each feature, sample values uniformly between the observed minimum and maximum values.</li>
+<li>These reference data sets have no inherent cluster structure.</li>
+</ul></li>
+<li><strong>Compute WCSS for each reference dataset:</strong>
+<ul>
+<li>For each of the <span class="math inline">\(B\)</span> random data sets <span class="math inline">\(b = 1, \dots, B\)</span>:
+<ul>
+<li>Perform clustering assuming <span class="math inline">\(K\)</span> clusters.</li>
+<li>Compute reference WCSS <span class="math inline">\(W_{kb}^*\)</span>.</li>
+</ul></li>
+</ul></li>
+<li><strong>Calculate the Gap Statistic:</strong> <span class="math display">\[
+\text{Gap}(K) = \frac{1}{B} \sum_{b=1}^{B} \log(W_{kb}^*) - \log(W_k)
+\]</span> Where:
+<ul>
+<li><span class="math inline">\(\log(W_k)\)</span> = log of actual WCSS,</li>
+<li><span class="math inline">\(\log(W_{kb}^*)\)</span> = log of reference WCSS for data set <span class="math inline">\(b\)</span>.</li>
+</ul></li>
+<li><strong>Calculate standard deviation:</strong> <span class="math display">\[
+\text{sd}(K) = \sqrt{\frac{1}{B} \sum_{b=1}^{B} \left[\log(W_{kb}^*) - \frac{1}{B} \sum_{b=1}^{B} \log(W_{kb}^*)\right]^2}
+\]</span></li>
+</ol>
+<p>The above steps are repeated for several <span class="math inline">\(K\)</span> values. The number of clusters is selected to be either the value of <span class="math inline">\(K\)</span> for which <span class="math inline">\(\text{Gap}(K)\)</span> is maximised, or the minimum <span class="math inline">\(K\)</span> value for which <span class="math inline">\(\text{Gap}(K) \geq \text{Gap}(K+1) − \text{sd}(K+1)\)</span>.</p>
+<p>Good news is you do not need to compute the Gap statistic manually <em>(although this would be a fun coding exercise)</em>. The <code>clusGap</code> function from the <code>cluster</code> package provides a computation of the Gap statistic for a range of <span class="math inline">\(K\)</span> values. We use this to compute the Gap statistic for <span class="math inline">\(K = 1, \ldots, 10\)</span> on the iris data set with <span class="math inline">\(B=100\)</span> (i.e.&nbsp;100 reference data sets for each value of <span class="math inline">\(K\)</span>). We can then visualise the results using the <code>fviz_gap_stat</code> function from <code>factoextra</code> package. The <code>fviz_gap_stat</code> function also allows for determining the rule for selecting the number of clusters (e.g.&nbsp;maximum Gap value, or the one standard error rule).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Gap statistic values</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>iris_gap <span class="ot">&lt;-</span> <span class="fu">clusGap</span>(<span class="at">x =</span> iris,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">FUNcluster =</span> kmeans,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">nstart =</span> <span class="dv">100</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">K.max =</span> <span class="dv">10</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">B =</span> <span class="dv">100</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the fviz_gap_stat function to visualise Gap statistic values</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the number of clusters using the maximum Gap</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">fviz_gap_stat</span>(<span class="at">gap_stat =</span> iris_gap,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">linecolor =</span> <span class="st">'red'</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">maxSE =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"globalmax"</span>)) <span class="sc">+</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Gap statistic values for K-Means solutions on iris data set"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"(Maximum Gap)"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the number of clusters using the one SE rule</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">fviz_gap_stat</span>(<span class="at">gap_stat =</span> iris_gap,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                    <span class="at">linecolor =</span> <span class="st">'red'</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                    <span class="at">maxSE =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"Tibs2001SEmax"</span>)) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Gap statistic values for K-Means solutions on iris data set"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"(One SE rule)"</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We see that the two rules give two completely different numbers of clusters. At the end, it is up to us to select the number of clusters and this may be based on the context, domain knowledge, or simply what the different solutions in varying numbers of clusters mean!</p>
+</section>
+<section id="extrinsic-evaluation-metrics" class="level2">
+<h2 class="anchored" data-anchor-id="extrinsic-evaluation-metrics">Extrinsic Evaluation Metrics</h2>
+<p>Suppose we have run clustering on a data set using two different clustering algorithms and we want to check how similar these solutions are. Or perhaps we have cluster labels and wish to assess how much our obtained partition agrees with the labels. In this case, we need to use <strong>extrinsic evaluation metrics</strong> to quantify this agreement! We provide a list of some extrinsic evaluation metrics below <em>(you do not need to know or use all of them; usually just 2-3 are enough)</em>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Range</th>
+<th>Higher is Better?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rand Index (RI)</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>Adjusted Rand Index (ARI)</td>
+<td><span class="math inline">\([-1, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="odd">
+<td>Fowlkes-Mallows Index (FMI)</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>Jaccard Index</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="odd">
+<td>Mutual Information (MI)</td>
+<td><span class="math inline">\([0, \infty)\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>Adjusted Mutual Information (AMI)</td>
+<td><span class="math inline">\([-1, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="odd">
+<td>Normalised Mutual Information (NMI)</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>Homogeneity</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="odd">
+<td>Completeness</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="even">
+<td>V-measure</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+<tr class="odd">
+<td>Purity</td>
+<td><span class="math inline">\([0, 1]\)</span></td>
+<td>✅ Yes</td>
+</tr>
+</tbody>
+</table>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>Extrinsic evaluation metrics can also compare two partitions with different numbers of clusters!</p>
+</div>
+</section>
+<section id="adjusted-rand-index" class="level2">
+<h2 class="anchored" data-anchor-id="adjusted-rand-index">(Adjusted) Rand Index</h2>
+<p>The Rand Index (RI) is one of the most commonly used extrinsic evaluation metrics in clustering. In order to define the RI, we assume that we have access to two partitions <span class="math inline">\(\mathcal{C}_1\)</span> and <span class="math inline">\(\mathcal{C}_2\)</span> of the same <span class="math inline">\(n\)</span> objects into <span class="math inline">\(K_1\)</span> and <span class="math inline">\(K_2\)</span> clusters, respectively <em>(note that it is possible that <span class="math inline">\(K_1 \neq K_2\)</span>)</em>. We introduce the following notation:</p>
+<ul>
+<li><span class="math inline">\(a\)</span>: Number of object pairs which are in the same cluster in <span class="math inline">\(\mathcal{C}_1\)</span> and in the same cluster in <span class="math inline">\(\mathcal{C}_2\)</span>.</li>
+<li><span class="math inline">\(b\)</span>: Number of object pairs which are in distinct clusters in <span class="math inline">\(\mathcal{C}_1\)</span> and in distinct clusters in <span class="math inline">\(\mathcal{C}_2\)</span>.</li>
+<li><span class="math inline">\(c\)</span>: Number of object pairs which are in the same cluster in <span class="math inline">\(\mathcal{C}_1\)</span> and in distinct clusters in <span class="math inline">\(\mathcal{C}_2\)</span>.</li>
+<li><span class="math inline">\(d\)</span>: Number of object pairs which are in distinct clusters in <span class="math inline">\(\mathcal{C}_1\)</span> and in the same cluster in <span class="math inline">\(\mathcal{C}_2\)</span>.</li>
+</ul>
+<p>The RI between <span class="math inline">\(\mathcal{C}_1\)</span> and <span class="math inline">\(\mathcal{C}_2\)</span> is then defined as: <span class="math display">\[
+\text{RI}(\mathcal{C}_1, \mathcal{C}_2) = \frac{a + b}{a + b + c + d} = \frac{a + b}{\binom{n}{2}}.
+\]</span></p>
+<div class="think-note">
+<p>❓ <strong>Why does the denominator in the RI definition simplify?</strong></p>
+<p>Can you explain why the denominator <span class="math inline">\(a + b + c + d\)</span> in the above definition of the RI simplifies to <span class="math inline">\(\binom{n}{2}\)</span>?</p>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🤔 Quiz: Let <span class="math inline">\(n = 5\)</span> and suppose we have two partitions <span class="math inline">\(\mathcal{C}_1 = \{ \{1, 2, 3\}, \{4, 5 \} \}\)</span> and <span class="math inline">\(\mathcal{C}_2 = \{ \{4, 1, 5\}, \{2, 3 \} \}\)</span>. What is the value of <span class="math inline">\(\text{RI}(\mathcal{C}_1, \mathcal{C}_2)\)</span>?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A. <span class="math inline">\(0.3\)</span><br>
+B. <span class="math inline">\(0.4\)</span><br>
+C. <span class="math inline">\(0.5\)</span><br>
+D. <span class="math inline">\(0.6\)</span><br>
+</p>
+<details>
+<summary>
+Show Answer
+</summary>
+<p><strong>D.</strong> <span class="math inline">\(0.6\)</span></p>
+<p>What values of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> did you get?</p>
+</details>
+</div>
+</div>
+<p>The <strong>Adjusted Rand Index (ARI)</strong> is the adjusted-for-chance version of the RI. It takes into account the expected similarity among all pairwise comparisons between two clusterings specified by a random model and corrects the RI accordingly. Suppose we have the following cross-tabulation of two partitions <span class="math inline">\(\mathcal{C}_1\)</span> and <span class="math inline">\(\mathcal{C}'\)</span>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(C'_1\)</span></th>
+<th><span class="math inline">\(\ldots\)</span></th>
+<th><span class="math inline">\(C'_{K'}\)</span></th>
+<th>Sum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(C_1\)</span></td>
+<td><span class="math inline">\(n_{1,1}\)</span></td>
+<td><span class="math inline">\(\ldots\)</span></td>
+<td><span class="math inline">\(n_{1,K'}\)</span></td>
+<td><span class="math inline">\(a_1\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\ddots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(C_{K}\)</span></td>
+<td><span class="math inline">\(n_{K,1}\)</span></td>
+<td><span class="math inline">\(\ldots\)</span></td>
+<td><span class="math inline">\(n_{K, K'}\)</span></td>
+<td><span class="math inline">\(a_{K}\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Sum</strong></td>
+<td><span class="math inline">\(b_1\)</span></td>
+<td><span class="math inline">\(\ldots\)</span></td>
+<td><span class="math inline">\(b_{K'}\)</span></td>
+<td><span class="math inline">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>where <span class="math inline">\(C_k\)</span> and <span class="math inline">\(C'_k\)</span> denote the <span class="math inline">\(k\)</span>th cluster in <span class="math inline">\(\mathcal{C}\)</span> and <span class="math inline">\(\mathcal{C}'\)</span>, respectively, while <span class="math inline">\(K\)</span> and <span class="math inline">\(K'\)</span> are the number of clusters that the two partitions assume. A hypergeometric model is used as a baseline random model, according to which: <span class="math display">\[
+n_{i,j} \sim \text{Hypergeometric}(n, a_i, b_j),
+\]</span></p>
+<p>with <span class="math inline">\(n_{i, j}\)</span> representing the number of objects assigned in clusters <span class="math inline">\(C_i\)</span> and <span class="math inline">\(C'_{j}\)</span>.</p>
+<div class="think-note">
+<p>❓ <strong>How can you explain this?</strong></p>
+<p>Can you give an interpretation of the use of the hypergeometric distribution for the random model?</p>
+</div>
+<p>Therefore, the ARI between <span class="math inline">\(\mathcal{C}\)</span> and <span class="math inline">\(\mathcal{C}'\)</span> is given by:</p>
+<p><span class="math display">\[
+\begin{align*}
+    \text{ARI}(\mathcal{C}, \mathcal{C}') &amp;= \frac{\text{RI}(\mathcal{C}, \mathcal{C}') - \mathbb{E}\left[ \text{RI}(\mathcal{C}, \mathcal{C}') \right]}{\max \text{RI}(\mathcal{C}, \mathcal{C}') - \mathbb{E}\left[ \text{RI}(\mathcal{C}, \mathcal{C}') \right]]} \\
+    &amp; = \frac{\sum\limits_{i=1}^K \sum\limits_{j=1}^{K'} \binom{n_{i,j}}{2} - \frac{\sum\limits_{i=1}^K \binom{a_i}{2}\sum\limits_{j=1}^{K'}\binom{b_j}{2}}{\binom{n}{2}}}{\frac{1}{2}\left\{ \sum\limits_{i=1}^K \binom{a_i}{2} + \sum\limits_{j=1}^{K'}\binom{b_j}{2} \right\} - \frac{\sum\limits_{i=1}^K \binom{a_i}{2}\sum\limits_{j=1}^{K'}\binom{b_j}{2}}{\binom{n}{2}}}.
+\end{align*}
+\]</span></p>
+<p>The Expression for the ARI may look a bit complicated but there is no need to compute it manually! The <code>aricode</code> package in <code>R</code> includes relevant functions for computing the RI, the ARI, as well as some other extrinsic evaluation metrics. The example below is an illustration of how to use these functions on the iris data set, assuming we have run K-Means with <span class="math inline">\(K=3\)</span> and we wish to compare our clusters to the actual labels (i.e.&nbsp;the Species feature that we previously removed).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reload the data to get access to the Species feature</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> iris<span class="sc">$</span>Species</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now remove the labels to run clustering on the rest of the features</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>iris <span class="ot">&lt;-</span> iris[, <span class="sc">-</span><span class="dv">5</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>kmeans_res <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> iris,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">centers =</span> <span class="dv">3</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">iter.max =</span> <span class="dv">100</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nstart =</span> <span class="dv">100</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the RI and the ARI</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ri_iris <span class="ot">&lt;-</span> <span class="fu">RI</span>(kmeans_res<span class="sc">$</span>cluster, species)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>ari_iris <span class="ot">&lt;-</span> <span class="fu">ARI</span>(kmeans_res<span class="sc">$</span>cluster, species)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'Rand Index:'</span>, ri_iris, <span class="st">'</span><span class="sc">\n</span><span class="st">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rand Index: 0.8797315 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'Adjusted Rand Index:'</span>, ari_iris, <span class="st">'</span><span class="sc">\n</span><span class="st">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Adjusted Rand Index: 0.7302383 </code></pre>
+</div>
+</div>
+<div class="think-note">
+<p>❓ <strong>Negative ARI values</strong></p>
+<p>The RI is restricted to give a value in the unit interval <span class="math inline">\([0, 1]\)</span>. In contrast, the ARI produces values in <span class="math inline">\([-1, 1]\)</span> instead. How would you interpret a negative value of the ARI?</p>
+</div>
+<p>Note that it is always a good idea to report several evaluation metrics. The <code>aricode</code> package provides implementations for some of these, such as the AMI and the NMI. Unfortunately, there is no <code>R</code> package that includes all of the extrinsic evaluation metrics mentioned here; you are more than welcome to use functions from other packages that calculate these extrinsic evaluation metrics.</p>
+</section>
+<section id="visualisations" class="level2">
+<h2 class="anchored" data-anchor-id="visualisations">Visualisations</h2>
+<p>Clustering is an unsupervised learning problem, therefore there is no “ground truth” that is readily available. When it comes to evaluating our clustering output, it is usually best to refer to a qualitative assessment of the resulting partition.</p>
+<p>There are several ways one can visualise the resulting output. These allow for a qualitative assessment of our clusters. We will make use of two such plots, namely <strong>pair plots</strong> and <strong>parallel coordinate plots</strong>. A pair plot is simply a matrix of pairwise scatter plots of the observations; that is, a visualisation of observations on all pairs of variables. Pair plots can get extremely large when the number of features included in the data is very large. Below, we provide an example of a pair plot on the iris data; we use the obtained partition into 3 clusters as our solution.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take the full iris data set and add a column for the clustering solution</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>iris<span class="sc">$</span>Cluster <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(kmeans_res<span class="sc">$</span>cluster)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot variables where colour = obtained cluster label + point shape = Species</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(iris[, <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)],</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">col =</span> iris<span class="sc">$</span>Cluster,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">pch =</span> <span class="fu">as.integer</span>(iris<span class="sc">$</span>Species))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>GGally</code> package provides some nice pair plot visualisations including additional information using the <code>ggpairs</code> function. This also produces a legend that can be used for reference.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(<span class="at">data =</span> iris,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">columns =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">col =</span> Cluster, <span class="at">shape =</span> Species),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>The <code>ggpairs</code> function returns more than just the pair plots! It also reports the overall correlation between variables and correlations between variables for observations in each cluster <em>(can you explain what the asterisks mean?)</em>, as well as density estimates of the features (on the diagonal) for each cluster.</p>
+</div>
+<p>For instance, looking at these plots shows that the versicolor and virginica species are overlapping and this has confused K-Means. This is perhaps why the Silhouette was suggesting two clusters.</p>
+<div class="think-note">
+<p>❓ <strong>Solution suggested by silhouette</strong></p>
+<p>The Silhouette method suggested a solution into 2 clusters. Try running K-Means with <span class="math inline">\(K=2\)</span> on the iris data set and create a pairs plot. What do you see? Can you justify why the silhouette was suggesting 2 clusters instead of 3?</p>
+</div>
+<p>A second type of plots that is usually of interest is the parallel coordinates plot. This is simply a plot where a statistic of interest is visualised for each variable, with different lines representing different clusters. The function below can be used for generating a parallel coordinates plot and we use it on our K-Means solution on iris.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>parallel_coords_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(data, labels, <span class="at">stat_fun =</span> mean, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">rotate_labels =</span> <span class="dv">45</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">line_size =</span> <span class="fl">1.2</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">point_size =</span> <span class="dv">3</span>) {</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  clusters <span class="ot">&lt;-</span> <span class="fu">unique</span>(labels)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  n_clusters <span class="ot">&lt;-</span> <span class="fu">length</span>(clusters)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  n_features <span class="ot">&lt;-</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  feature_names <span class="ot">&lt;-</span> <span class="fu">colnames</span>(data)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  stat_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_clusters, <span class="at">ncol =</span> n_features)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_along</span>(clusters)) {</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    cluster_data <span class="ot">&lt;-</span> data[labels <span class="sc">==</span> clusters[i], , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_features) {</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>      stat_matrix[i, j] <span class="ot">&lt;-</span> <span class="fu">stat_fun</span>(cluster_data[, j])</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  plot_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">Feature =</span> <span class="fu">rep</span>(feature_names, <span class="at">each =</span> n_clusters),</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">Value =</span> <span class="fu">as.vector</span>(<span class="fu">t</span>(stat_matrix)),</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">Cluster =</span> <span class="fu">rep</span>(<span class="fu">as.character</span>(clusters), <span class="at">times =</span> n_features),</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">Feature_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_features, <span class="at">each =</span> n_clusters)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(<span class="at">x =</span> Feature_num, <span class="at">y =</span> Value, </span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                             <span class="at">group =</span> Cluster, <span class="at">color =</span> Cluster)) <span class="sc">+</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">linewidth =</span> line_size) <span class="sc">+</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> point_size) <span class="sc">+</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span>n_features, <span class="at">labels =</span> feature_names) <span class="sc">+</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Features"</span>, <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">"Statistic ("</span>, <span class="fu">deparse</span>(<span class="fu">substitute</span>(stat_fun)), <span class="st">")"</span>),</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>         <span class="at">color =</span> <span class="st">"Cluster"</span>) <span class="sc">+</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> rotate_labels, </span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">hjust =</span> <span class="cf">if</span>(rotate_labels <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="dv">1</span> <span class="cf">else</span> <span class="fl">0.5</span>, </span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.major.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"grey80"</span>),</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage with the K-Means labels</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a><span class="fu">parallel_coords_plot</span>(<span class="at">data =</span> iris[, <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)],</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> kmeans_res<span class="sc">$</span>cluster,</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>                     <span class="at">stat_fun =</span> mean,</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>                     <span class="at">rotate_labels =</span> <span class="dv">45</span>) <span class="sc">+</span></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Parallel coordinates plot of K-Means solution on iris data'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Thus, we can see that one of the clusters stands out as it includes flowers with large average petal length, whereas some other cluster contains flowers with very small sepal widths. We can also use a parallel coordinates plot on the actual species labels to have a much more complete picture.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parallel coordinates plot using Species labels</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">parallel_coords_plot</span>(<span class="at">data =</span> iris[, <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)],</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> iris<span class="sc">$</span>Species,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">stat_fun =</span> mean,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">rotate_labels =</span> <span class="dv">45</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Parallel coordinates plot of iris Species'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="evalmetrics_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="funfact-box">
+<p>🚀 <strong>Time to practice!</strong></p>
+<p>The <code>USArrests</code> data set includes statistics for assault, murder, and rape in each of the 50 US states from 1973. Load the <code>USArrests</code> data in <code>R</code> (just use <code>data(USArrests)</code> to load it to your working environment). Use a clustering algorithm of your choice and try to estimate the number of clusters using different intrinsic evaluation metrics. Then, use a second clustering algorithm, estimate the number of clusters and compare the partitions each algorithm has given you using several extrinsic evaluation metrics. Visualise both obtained partitions and try interpreting them. Which one makes more sense to you and why?</p>
+</div>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
+<ul>
+<li>Estimating the number of clusters is a challenging problem in clustering.</li>
+<li>The Elbow method is a heuristic that can be used for estimating the number of clusters.</li>
+<li>Intrinsic evaluation measures (such as the Silhouette, or the Gap statistic) provide a more principled approach to the problem.</li>
+<li>Extrinsic evaluation metrics quantify the agreement between two partitions or between a partition and cluster labels (if those exist).</li>
+<li>Interpreting the clustering output requires a qualitative assessment of the clusters; this is why visualisations using e.g.&nbsp;pair plots or parallel coordinate plots are very useful.</li>
+</ul>
+
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-charrad2014nbclust" class="csl-entry" role="listitem">
+Charrad, M., Ghazzali, N., Boiteau, V., &amp; Niknafs, A. (2014). <span>N</span>b<span>C</span>lust: An <span>R</span> package for determining the relevant number of clusters in a data set. <em>Journal of Statistical Software</em>, <em>61</em>, 1–36.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
