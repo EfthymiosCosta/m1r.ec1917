@@ -115,7 +115,6 @@ hc <- hclust(d = dist_matrix,
 # Plot the hierarchy
 plot(hc, main = "Hierarchical Clustering of European Cities by Climate",
      xlab = "City", ylab = "Distance", sub = "")
-#rect.hclust(hc, k = 3, border = c("red", "blue", "darkgreen"))
 ```
 
 ::: funfact-box

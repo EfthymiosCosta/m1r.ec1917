@@ -45,7 +45,7 @@ $\mathbf{m}_k = \frac{1}{\lvert C'_k \rvert} \sum\limits_{i: \mathbf{x}_i \in C'
 ::: {.think-note}
 ❓  **Do I have to use the Euclidean distance?**
 
-No! You can use any distance or dissimilarity function of your choice! For instance, if you use
+Yes, if you want to work strictly with K-Means! However, you can use any distance or dissimilarity function of your choice; this will simply be a different clustering algorithm! For instance, if you use
 the Manhattan distance, you will implement the **K-Medians** clustering algorithm. *(Can you see why it is called "K-Medians"?)*
 :::
 

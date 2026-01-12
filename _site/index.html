@@ -310,14 +310,14 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="citation">Citation</h2>
 <p>If you use these resources in your work, please cite as follows:</p>
 <blockquote class="blockquote">
-<p>Costa, E. (2026). <em>A First Tutorial on Cluster Analysis</em> [Course materials]. TBC.</p>
+<p>Costa, E. (2026). <em>A First Tutorial on Cluster Analysis</em> [Course materials]. https://efthymioscosta.github.io/m1r.ec1917/.</p>
 </blockquote>
 <pre><code>@online{costa2026clustering,
   author = {Efthymios Costa},
   title = {A {F}irst {T}utorial on {C}luster {A}nalysis},
   year = {2026},
   note = {[Course materials]},
-  url = {TBC}
+  url = {https://efthymioscosta.github.io/m1r.ec1917/}
 }</code></pre>
 </section>
 <section id="license" class="level2">
@@ -414,7 +414,7 @@ R Core Team. (2025). <em>R: A language and environment for statistical computing
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/EfthymiosCosta\.github\.io\/m1r\.ec1917\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
