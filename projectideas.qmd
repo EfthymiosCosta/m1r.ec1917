@@ -5,7 +5,7 @@ title: "Project Ideas"
 ## Suggestions
 
 You are more than welcome to work on any project of your choice, as long as it is relevant
-to clustering and the materials presented. A common structure of your project c ould be the following:
+to clustering and the materials presented. A common structure of your project could be the following:
 
 1. Choose a data set of your choice that is interesting to you (and explain why).
 2. Perform cluster analysis, estimate the number of clusters.
