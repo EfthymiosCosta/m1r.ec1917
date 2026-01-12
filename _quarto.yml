@@ -1,0 +1,41 @@
+project:
+  type: website
+
+website:
+  title: "A First Tutorial on Cluster Analysis"
+  navbar:
+    right:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - dists.qmd
+      - kmeans_pam.qmd
+      - hclust.qmd
+      - evalmetrics.qmd
+      - projectideas.qmd
+
+format:
+  html:
+    math:
+      engine: mathjax
+    include-in-header:
+      text: |
+        <script>
+        MathJax = {
+          tex: {
+            macros: {
+              argmax: ['\\operatorname*{arg\\,max}', 1],
+              argmin: ['\\operatorname*{arg\\,min}', 1]
+            }
+          }
+        };
+        </script>
+    theme: flatly
+    css: styles.css
+    toc: true
+
+bibliography: references.bib
+csl: apa.csl
+
+editor: visual
+

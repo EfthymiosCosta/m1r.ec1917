@@ -1,0 +1,102 @@
+/* Hyperlinks */
+a {
+  color: #0066cc;
+}
+
+a:hover {
+  color: #004499;
+}
+/* Dark red navbar */
+.navbar {
+  background-color: #000E8A !important;  /* dark red */
+}
+
+/* Keep text readable */
+.navbar .navbar-brand,
+.navbar .navbar-nav .nav-link {
+  color: #ffffff !important;
+}
+
+.navbar .navbar-nav .nav-link:hover {
+  color: #f0f0f0 !important;
+}
+
+/* Sidebar links */
+.sidebar-navigation .sidebar-item a {
+  color: #0066cc;  /* same as main links */
+}
+
+.sidebar-navigation .sidebar-item a:hover {
+  color: #004499;
+}
+
+.sidebar-navigation .sidebar-item.active a {
+  color: #003366;  /* darker for active page */
+}
+
+/* TOC links */
+.sidebar nav[role="doc-toc"] ul li a.active {
+  color: #0066cc !important;
+  border-left-color: #0066cc !important;
+}
+
+/* Hover state for TOC links */
+.sidebar nav[role="doc-toc"] ul li a:hover {
+  color: #0066cc !important;
+}
+
+.callout.callout-note {
+  background-color: #E0FFE8 !important;
+  border-left-color: #4caf50 !important;
+}
+
+.callout.callout-note .callout-header {
+  background-color: #E0FFE8 !important;
+}
+
+.callout.callout-note .callout-body {
+  background-color: #E0FFE8 !important;
+}
+
+.callout.callout-note .callout-body-container {
+  background-color: #E0FFE8 !important;
+}
+
+.funfact-box {
+  background-color: #E0FFE8;
+  border-left: 5px solid #4caf50;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.funfact-box .funfact-title {
+  color: #2e7d32;
+  font-weight: bold;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.think-note {
+  background-color: #fff8e1 !important;
+  border-left: 5px solid #ffd54f !important;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.think-note h4 {
+  color: #ff8f00;
+  margin-top: 0;
+}
+
+div[class*="callout"]:has(.funfact-title),
+div.funfact-box,
+div.callout-note {
+  background-color: #E0FFE8 !important;
+  border-left-color: #4caf50 !important;
+}

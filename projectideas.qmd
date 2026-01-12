@@ -1,0 +1,32 @@
+---
+title: "Project Ideas"
+---
+
+## Suggestions
+
+You are more than welcome to work on any project of your choice, as long as it is relevant
+to clustering and the materials presented. A common structure of your project c ould be the following:
+
+1. Choose a data set of your choice that is interesting to you (and explain why).
+2. Perform cluster analysis, estimate the number of clusters.
+3. Interpret your results and identify interesting patterns.
+
+If you would like to stick with more methodological projects, the list below
+includes some suggestions on topics you may wish to work on for your poster:
+
+- Comparison of partitional/hierarchical clustering with different dissimilarity functions/linkage criteria.
+- Selection of the number of clusters in a data set using multiple intrinsic evaluation metrics.
+- Assessment of the "clusterability" of multiple data sets using multiple clustering algorithms.
+- Development of a dissimilarity function that allows for more interpretable clusters.
+- Comparison of algorithmic complexity for clustering algorithms.
+
+*(The list above is by no means exhaustive).*
+
+## Finding data
+
+The following two pages are excellent resources for finding data sets:
+
+1. [UCI Machine Learning Repository](https://archive.ics.uci.edu/)
+2. [Kaggle](https://www.kaggle.com/datasets)
+
+**Important:** Any data set you use needs to be cited.

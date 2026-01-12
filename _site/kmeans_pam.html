@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2. Partitional Clustering – A First Tutorial on Cluster Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f93c2b1f3f0577f377aefa4848a86a36.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+MathJax = {
+  tex: {
+    macros: {
+      argmax: ['\\operatorname*{arg\\,max}', 1],
+      argmin: ['\\operatorname*{arg\\,min}', 1]
+    }
+  }
+};
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">A First Tutorial on Cluster Analysis</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">0. Introduction: What is clustering?</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./dists.html"> 
+<span class="menu-text">1. Distances &amp; Dissimilarities</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./kmeans_pam.html" aria-current="page"> 
+<span class="menu-text">2. Partitional Clustering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./hclust.html"> 
+<span class="menu-text">3. Hierarchical Clustering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./evalmetrics.html"> 
+<span class="menu-text">4. Number Of Clusters &amp; Evaluation</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#k-means" id="toc-k-means" class="nav-link active" data-scroll-target="#k-means">K-Means</a></li>
+  <li><a href="#k-means-implementation" id="toc-k-means-implementation" class="nav-link" data-scroll-target="#k-means-implementation">K-Means Implementation</a></li>
+  <li><a href="#k-means-in-r" id="toc-k-means-in-r" class="nav-link" data-scroll-target="#k-means-in-r">K-Means in <code>R</code></a></li>
+  <li><a href="#initialisation-matters" id="toc-initialisation-matters" class="nav-link" data-scroll-target="#initialisation-matters">Initialisation matters</a></li>
+  <li><a href="#k-medoids" id="toc-k-medoids" class="nav-link" data-scroll-target="#k-medoids">K-Medoids</a></li>
+  <li><a href="#k-medoids-implementation" id="toc-k-medoids-implementation" class="nav-link" data-scroll-target="#k-medoids-implementation">K-Medoids Implementation</a></li>
+  <li><a href="#k-medoids-in-r" id="toc-k-medoids-in-r" class="nav-link" data-scroll-target="#k-medoids-in-r">K-Medoids in <code>R</code></a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">2. Partitional Clustering</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Definition (Partitional Clustering):</strong> A clustering algorithm that divides a data set into a fixed number <span class="math inline">\(k\)</span> of non-overlapping, exhaustive clusters, where each data point belongs to exactly one cluster is called a <em>partitional clustering algorithm</em>.</p>
+<div class="think-note">
+<p>❓ <strong>Isn’t every clustering algorithm partitional?</strong></p>
+<p>It is natural to wonder about that. We do care about obtaining a partition of our data set, but clustering algorithms can give us more than just that, as we will see later.</p>
+</div>
+<section id="k-means" class="level2">
+<h2 class="anchored" data-anchor-id="k-means">K-Means</h2>
+<p>This is probably the most commonly used and studied clustering algorithm. It is simple, easy to understand and implement, and produces easy-to-interpret clusters.</p>
+<p><strong>Definition (K-Means):</strong> K-Means clustering is an iterative, partitional clustering algorithm that partitions <span class="math inline">\(n\)</span> data points into <span class="math inline">\(K\)</span> pre-defined, non-overlapping clusters, where each point belongs to the cluster with the nearest mean, minimising the within-cluster variance.</p>
+<p>More specifically, given a data set of <span class="math inline">\(n\)</span> continuous <span class="math inline">\(p\)</span>-dimensional observations <span class="math inline">\(\mathbf{X}\)</span>, the K-Means algorithm seeks to find a partition of the data points into <span class="math inline">\(K\)</span> groups. This partition, denoted by <span class="math inline">\(\mathcal{C} = \{C_1, \ldots, C_K\}\)</span>, is chosen among the set of all partitions into <span class="math inline">\(K\)</span> non-empty groups <span class="math inline">\(\mathcal{P}_K\)</span> to minimise the within-cluster sum of squares, which acts as a measure of cluster variability. More formally, the K-Means objective is formulated as follows:</p>
+<p><span class="math display">\[
+\mathcal{C} = \argmin\limits_{\mathcal{C}' \in \mathcal{P}_K } \sum\limits_{k=1}^K \sum\limits_{i : \mathbf{x}_i \in C'_k} \| \mathbf{x}_i - \mathbf{m}_k \|^2, \quad \mathbf{m}_k = \frac{1}{\lvert C'_k \rvert} \sum\limits_{i: \mathbf{x}_i \in C'_k} \mathbf{x}_i.
+\]</span></p>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>The name “K-Means” is not random. The algorithm was named like that because it seeks to minimise the distance between points and their respective cluster’s mean, denoted by <span class="math inline">\(\mathbf{m}_k\)</span> for cluster <span class="math inline">\(1 \leq k \leq K\)</span> above. The <span class="math inline">\(\mathbf{m}_k\)</span>’s are called the cluster <strong>centroids</strong> as they are the most centrally-located observations in their cluster. Can you prove this result?</p>
+<p><em>(Hint: Fix a cluster <span class="math inline">\(k\)</span> and differentiate with respect to <span class="math inline">\(\mathbf{m}_k\)</span>. Do you get <span class="math inline">\(\mathbf{m}_k = \frac{1}{\lvert C'_k \rvert} \sum\limits_{i: \mathbf{x}_i \in C'_k} \mathbf{x}_i\)</span>?)</em></p>
+</div>
+<div class="think-note">
+<p>❓ <strong>Do I have to use the Euclidean distance?</strong></p>
+<p>No! You can use any distance or dissimilarity function of your choice! For instance, if you use the Manhattan distance, you will implement the <strong>K-Medians</strong> clustering algorithm. <em>(Can you see why it is called “K-Medians”?)</em></p>
+</div>
+</section>
+<section id="k-means-implementation" class="level2">
+<h2 class="anchored" data-anchor-id="k-means-implementation">K-Means Implementation</h2>
+<p>K-Means is an iterative algorithm, that is, it uses an iterative relocation process that updates the cluster assignments until these remain unchanged. Here are the steps of K-Means:</p>
+<ol type="1">
+<li><strong>Initialise:</strong> Choose <span class="math inline">\(K\)</span> initial centroids <span class="math inline">\(\mathbf{m}_1^{(0)}, \ldots, \mathbf{m}_K^{(0)}\)</span>, set <span class="math inline">\(t \leftarrow 1\)</span> and <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>FALSE</code>.</li>
+<li><strong>Iterative steps:</strong> While <span class="math inline">\(t \leq t^\text{max}\)</span> and <code>converged</code> <span class="math inline">\(\neq\)</span> <code>TRUE</code> do:</li>
+</ol>
+<ol type="i">
+<li><p><strong>Assign:</strong> Assign each observation to the cluster with its nearest centroid: <span class="math display">\[
+C_k^{(t)} = \{\mathbf{x}: \| \mathbf{x} - \mathbf{m}_k^{(t-1)} \| \leq \| \mathbf{x} - \mathbf{m}_j^{(t-1)} \| \ \forall k \neq j \}.
+\]</span></p></li>
+<li><p><strong>Update:</strong> Update the cluster centroids by computing the cluster means for the updated cluster assignments: <span class="math display">\[
+\mathbf{m}_k^{(t)} = \frac{1}{\lvert C_k^{(t)}\rvert }\sum\limits_{\mathbf{x} \in C_k^{(t)}} \mathbf{x}
+\]</span></p></li>
+<li><p><strong>Convergence check:</strong> If <span class="math inline">\(\mathbf{m}_k^{(t)} = \mathbf{m}_k^{(t-1)} \ \forall 1 \leq k \leq K\)</span>, set <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>TRUE</code>.</p></li>
+<li><p><strong>Increment:</strong> Set <span class="math inline">\(t \leftarrow t + 1\)</span>.</p></li>
+</ol>
+<ol start="3" type="1">
+<li><strong>Output:</strong> Partition <span class="math inline">\(\mathcal{C} = \{C_1, \ldots, C_K \}\)</span>, centroids <span class="math inline">\(\mathbf{m}_1, \ldots, \mathbf{m}_K\)</span>.</li>
+</ol>
+<p>The iterative process in Step 2 is repeated until either convergence is achieved <em>(i.e.&nbsp;cluster assignments remain unchanged)</em> or until a maximum number of iterations <span class="math inline">\(t^\text{max}\)</span> is reached. The K-Means algorithm usually converges in a few steps, so it’s only a matter of choosing <span class="math inline">\(t^\text{max}\)</span> not to be too small <em>(e.g.&nbsp;<span class="math inline">\(t^\text{max} = 2\)</span> is not enough)</em>.</p>
+</section>
+<section id="k-means-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="k-means-in-r">K-Means in <code>R</code></h2>
+<p>K-Means is implemented using the <code>kmeans</code> function in <code>R</code>. We generate a toy example to illustrate how the function works. The code below generates a data set with three well-separated clusters and runs K-Means with 3 clusters (input argument <code>centers = 3</code>), allowing up to 100 iterations until convergence (input argument <code>iter.max = 100</code>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data set with 3 well-separated clusters with 50 observations each</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>cluster1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>cluster2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">4</span>, <span class="at">sd =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>cluster3 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">3</span>, <span class="at">sd =</span> <span class="fl">0.5</span>))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cluster1, cluster2, cluster3)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the true labels (will not be used but good to have)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>true_labels <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">each =</span> n)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>data_kmeans <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> data,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                      <span class="at">centers =</span> <span class="dv">3</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                      <span class="at">iter.max =</span> <span class="dv">100</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect kmeans object structure</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_kmeans)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 9
+ $ cluster     : int [1:150] 3 3 3 3 3 3 3 3 3 3 ...
+ $ centers     : num [1:3, 1:2] 1.9957 3.873 0.0172 3.1247 0.0194 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : chr [1:3] "1" "2" "3"
+  .. ..$ : chr [1:2] "x" "y"
+ $ totss       : num 753
+ $ withinss    : num [1:3] 21.9 22.6 20.5
+ $ tot.withinss: num 65.1
+ $ betweenss   : num 688
+ $ size        : int [1:3] 50 50 50
+ $ iter        : int 2
+ $ ifault      : int 0
+ - attr(*, "class")= chr "kmeans"</code></pre>
+</div>
+</div>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>The input argument <code>centers</code> in the <code>kmeans</code> function can either take an integer that represents the number of clusters, or initial cluster centroids If an integer value is provided (as we did above), the initial centroids are chosen randomly.</p>
+</div>
+<p>Some interesting things included in the output are:</p>
+<ul>
+<li><code>cluster</code>: The clustering output. A vector of integers from 1 up to <span class="math inline">\(K\)</span> (in this case <span class="math inline">\(K=3\)</span>) indicating the cluster each observation is assigned to.</li>
+<li><code>centers</code>: The cluster centroids; a <span class="math inline">\((K \times p)\)</span>-dimensional matrix, where row <span class="math inline">\(k\)</span> represents <span class="math inline">\(\mathbf{m}_k\)</span>.</li>
+<li><code>size</code>: A <span class="math inline">\(K\)</span>-dimensional vector including the size of each cluster, i.e.&nbsp;number of observations assigned to each cluster.</li>
+<li><code>iter</code>: The number of iterations the algorithm needed to reach convergence.</li>
+</ul>
+<p>The output of the <code>kmeans</code> function includes some sum of squares values, specifically the between-cluster sum of squares (<code>betweenss</code>) and the within-cluster sum of squares (<code>withinss</code>). These are metrics which are related to how “tight” and how “separated” the clusters are. Specifically:</p>
+<p><span class="math display">\[
+\begin{align*}
+\text{BCSS} = \sum\limits_{k=1}^K \lvert C_k \rvert \| \mathbf{m}_k - \bar{\mathbf{x}} \|^2,\\
+\text{WCSS} = \sum\limits_{k=1}^K \sum\limits_{\mathbf{x}_i \in C_k} \| \mathbf{x}_i - \mathbf{m}_k \|^2,
+\end{align*}
+\]</span> with <span class="math inline">\(\bar{\mathbf{x}} \|^2\)</span> representing the overall mean vector of the whole data set.</p>
+<div class="think-note">
+<p>❓ <strong>How are these related to the K-Means objective?</strong></p>
+<p>Can you see how the BCSS and the WCSS relate to the objective of K-Means?</p>
+</div>
+</section>
+<section id="initialisation-matters" class="level2">
+<h2 class="anchored" data-anchor-id="initialisation-matters">Initialisation matters</h2>
+<p>K-Means is sensitive to initialisation. The code below runs K-Means on the toy data set we generated above using two different initialisations. It then plots the cluster solutions in a scatter plot, where each point is coloured according to the cluster it has been assigned to.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Bad initialisation; all initial centers are close together</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>bad_centers <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="fl">1.8</span>, <span class="fl">2.8</span>), <span class="fu">c</span>(<span class="fl">2.0</span>, <span class="fl">3.0</span>), <span class="fu">c</span>(<span class="fl">2.2</span>, <span class="fl">3.2</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>km_bad <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data, <span class="at">centers =</span> bad_centers, <span class="at">iter.max =</span> <span class="dv">100</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Good initialisation; spread centers across the data</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>good_centers <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>km_good <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data, <span class="at">centers =</span> good_centers, <span class="at">iter.max =</span> <span class="dv">100</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert integer values to factors</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>data_copy <span class="ot">&lt;-</span> data</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>data_copy<span class="sc">$</span>bad_cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(km_bad<span class="sc">$</span>cluster)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>data_copy<span class="sc">$</span>good_cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(km_good<span class="sc">$</span>cluster)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert centers to data frames with proper column names</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>bad_centers_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(km_bad<span class="sc">$</span>centers)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>bad_centers_df<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(bad_centers_df))</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(bad_centers_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"cluster"</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>good_centers_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(km_good<span class="sc">$</span>centers)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>good_centers_df<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(good_centers_df))</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(good_centers_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"cluster"</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plots</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data_copy, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> bad_cluster)) <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> bad_centers_df, </span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> bad_centers_df, </span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> cluster), </span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bad initialisation solution"</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Total WCSS: "</span>, <span class="fu">round</span>(km_bad<span class="sc">$</span>tot.withinss, <span class="dv">2</span>),</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>                        <span class="st">",</span><span class="sc">\n</span><span class="st">BCSS: "</span>, <span class="fu">round</span>(km_bad<span class="sc">$</span>betweenss, <span class="dv">2</span>))) <span class="sc">+</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data_copy, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> good_cluster)) <span class="sc">+</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> good_centers_df, </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> good_centers_df, </span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> cluster), </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Good initialisation solution"</span>,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Total WCSS: "</span>, <span class="fu">round</span>(km_good<span class="sc">$</span>tot.withinss, <span class="dv">2</span>),</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>                        <span class="st">",</span><span class="sc">\n</span><span class="st">BCSS: "</span>, <span class="fu">round</span>(km_good<span class="sc">$</span>betweenss, <span class="dv">2</span>))) <span class="sc">+</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="kmeans_pam_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="think-note">
+<p>❓ <strong>Can you explain what is happening?</strong></p>
+<p>The crosses above represent the cluster centroids obtained with the 2 different initialisations. Can you explain what has happened and why these are different? If you were to select one of the two solutions, which one would you choose? What does this tell us about the BCSS and the WCSS?</p>
+</div>
+<p>The example above shows that K-Means can be very sensitive to initialisation. There are two ways that this can be alleviated:</p>
+<ol type="1">
+<li>Manually give a good initialisation <em>(harder but quicker)</em></li>
+<li>Try multiple random initialisations <em>(easier but slower)</em></li>
+</ol>
+<p>The first option is harder because it requires having an idea of what the cluster centroids are in advance of performing clustering. But this is a bit counterintuitive, as the ultimate goal of clustering is to detect group structures that we do not know beforehand. This is why multiple initialisations (i.e.&nbsp;the second option) is almost always preferred. This can be significantly more expensive, as it involves re-running the algorithm and then comparing all solutions, but <code>kmeans</code> is a highly optimised function that runs very fast for a large number of resimulations. The number of times the function runs with different random initial centroids is controlled via <code>nstart</code>. Once solutions have been obtained for all random initialisations, the optimal solution that is returned is the one with the lowest WCSS and the highest BCSS (favouring well-separated compact clusters).</p>
+<p>We run the example from above with 100 random initialisations in the chunk below.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple initialisations; spread centers across the data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>km_multi <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(data,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">centers =</span> <span class="dv">3</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">nstart =</span> <span class="dv">100</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">iter.max =</span> <span class="dv">100</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert integer values to factors</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>data_copy<span class="sc">$</span>multi_clust <span class="ot">&lt;-</span> <span class="fu">factor</span>(km_multi<span class="sc">$</span>cluster)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert centers to data frames with proper column names</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>multi_clust_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(km_multi<span class="sc">$</span>centers)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>multi_clust_df<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(multi_clust_df))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(multi_clust_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"cluster"</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data_copy, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> multi_clust)) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> multi_clust_df, </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> multi_clust_df, </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> cluster), </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Multiple initialisations solution"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Total WCSS: "</span>, <span class="fu">round</span>(km_multi<span class="sc">$</span>tot.withinss, <span class="dv">2</span>),</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>                        <span class="st">",</span><span class="sc">\n</span><span class="st">BCSS: "</span>, <span class="fu">round</span>(km_multi<span class="sc">$</span>betweenss, <span class="dv">2</span>))) <span class="sc">+</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2 <span class="sc">/</span> p3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="kmeans_pam_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="think-note">
+<p>❓ <strong>Different output each time?</strong></p>
+<p>In the plot above, the good initialisation and the multiple initialisations solutions produce different clustering labels. If you rerun <code>kmeans</code> with multiple initialisations on the data, you will see that these labels keep switching. Is this a problem?</p>
+</div>
+</section>
+<section id="k-medoids" class="level2">
+<h2 class="anchored" data-anchor-id="k-medoids">K-Medoids</h2>
+<p><strong>Definition (K-Medoids):</strong> K-Medoids is an iterative, partitional clustering algorithm that partitions <span class="math inline">\(n\)</span> data points into <span class="math inline">\(K\)</span> pre-defined, non-overlapping clusters, where each cluster is represented by one of its actual data points (called a medoid), and each point is assigned to the cluster whose medoid is closest to it with respect to a given dissimilarity function.</p>
+<p>K-Medoids is flexible in the sense that it allows for any dissimilarity function to be used.</p>
+<div class="think-note">
+<p>❓ <strong>Isn’t that just K-Means when we use the Euclidean distance?</strong></p>
+<p>Actually no! The main difference here is that K-Medoids uses actual observations as the “cluster-representative points” (medoids), whereas the centroid in K-Means can (and usually is) some arbitrary point in <span class="math inline">\(\mathbb{R}^p\)</span>. Can you think of a case where that could make a difference?</p>
+</div>
+</section>
+<section id="k-medoids-implementation" class="level2">
+<h2 class="anchored" data-anchor-id="k-medoids-implementation">K-Medoids Implementation</h2>
+<p>We present an implementation of K-Medoids called Partitioning Around Medoids (PAM). Other implementations also exist but this is probably the most well-known and most widely used one.</p>
+<ol type="1">
+<li><strong>Initialise:</strong> Choose <span class="math inline">\(K\)</span> initial medoids <span class="math inline">\(M^{(0)} = \{\mathbf{m}_1^{(0)}, \ldots, \mathbf{m}_K^{(0)}\}\)</span>, set <span class="math inline">\(t \leftarrow 1\)</span> and <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>FALSE</code>.</li>
+<li><strong>Iterative steps:</strong> While <span class="math inline">\(t \leq t^\text{max}\)</span> and <code>converged</code> <span class="math inline">\(\neq\)</span> <code>TRUE</code> do:</li>
+</ol>
+<ol type="i">
+<li><p><strong>Assign:</strong> Assign each point to nearest medoid: <span class="math display">\[
+   C^{(t)}_k = \{\mathbf{x} \in \mathbf{X} : d(\mathbf{x}, \mathbf{m}^{(t-1)}_k) \leq d(\mathbf{x}, \mathbf{m}^{(t-1)}_j) \ \forall j \neq k\}
+   \]</span></p></li>
+<li><p><strong>Update/Swap:</strong> Compute total cost change <span class="math inline">\(\Delta_{ik}^{(t)}\)</span> of swapping each medoid <span class="math inline">\(\mathbf{m}_k^{(t)}\)</span> to observation <span class="math inline">\(\mathbf{x}_i\)</span> for all non-medoids <span class="math inline">\(\mathbf{x}_i \in \mathbf{X} \backslash M^{(t-1)}\)</span>. If <span class="math inline">\(\min\limits_{k,i} \Delta_{ik}^{(t)} &lt; 0\)</span>, perform the best swap to update medoids <span class="math inline">\(M^{(t)}\)</span>.</p></li>
+<li><p><strong>Convergence check:</strong> If <span class="math inline">\(\mathbf{m}_k^{(t)} = \mathbf{m}_k^{(t-1)} \ \forall 1 \leq k \leq K\)</span>, set <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>TRUE</code>.</p></li>
+<li><p><strong>Increment:</strong> Set <span class="math inline">\(t \leftarrow t + 1\)</span>.</p></li>
+</ol>
+<ol start="3" type="1">
+<li><strong>Output:</strong> Final partition and medoids.</li>
+</ol>
+<p>Notice that the cost change <span class="math inline">\(\Delta_{ik}\)</span> is given by:</p>
+<p><span class="math display">\[
+\Delta_{ik}^{(t)} = \sum_{s=1}^n \left[ \min_{\ell=1,\ldots,K} d\left(\mathbf{x}_s, \widetilde{\mathbf{m}}_\ell^{(ik)}\right) - \min_{\ell=1,\ldots,K} d\left(\mathbf{x}_s, \mathbf{m}_\ell^{(t-1)}\right) \right]
+\]</span> where <span class="math inline">\(d\)</span> is a dissimilarity function and <span class="math inline">\(\widetilde{\mathbf{m}}_\ell^{(ik)} = \mathbf{x}_i\)</span> if <span class="math inline">\(\ell = k\)</span>, else <span class="math inline">\(\widetilde{\mathbf{m}}_\ell^{(ik)} = \mathbf{m}_\ell^{(t-1)}\)</span>. This computes the total change in dissimilarity if we swap medoid <span class="math inline">\(\mathbf{m}_k^{(t-1)}\)</span> with observation <span class="math inline">\(\mathbf{x}_i\)</span>. The first term is the minimum distance to medoids after the swap, the second term is the minimum distance before the swap.</p>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>Unlike K-means which computes centroids as means, PAM tests every possible swap between current medoids and non-medoids. This corresponds to <span class="math inline">\(K \times (n-K)\)</span> swaps per iteration! The swap that reduces the total dissimilarity the most is chosen in each updating step. This exhaustive search makes PAM more computationally expensive.</p>
+</div>
+</section>
+<section id="k-medoids-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="k-medoids-in-r">K-Medoids in <code>R</code></h2>
+<p>K-Medoids, and more specifically PAM, is implemented using the <code>pam</code> function from the <code>cluster</code> package in <code>R</code>. We will use the same toy data set as before with 3 clusters (input argument <code>k = 3</code>) and the Euclidean distance as our dissimilarity (<code>diss = "euclidean"</code>), with 100 random medoid initialisations (<code>nstart = 100</code>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data_pam_euclid <span class="ot">&lt;-</span> <span class="fu">pam</span>(<span class="at">x =</span> data,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">k =</span> <span class="dv">3</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">metric =</span> <span class="st">"euclidean"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">nstart =</span> <span class="dv">100</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_pam_euclid)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 10
+ $ medoids   : num [1:3, 1:2] -0.1151 3.7547 1.9085 -0.0143 -0.017 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:2] "x" "y"
+ $ id.med    : int [1:3] 2 73 137
+ $ clustering: int [1:150] 1 1 1 1 1 1 1 1 1 1 ...
+ $ objective : Named num [1:2] 2.916 0.593
+  ..- attr(*, "names")= chr [1:2] "build" "swap"
+ $ isolation : Factor w/ 3 levels "no","L","L*": 1 1 1
+  ..- attr(*, "names")= chr [1:3] "1" "2" "3"
+ $ clusinfo  : num [1:3, 1:5] 50 50 50 1.24 1.65 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:5] "size" "max_diss" "av_diss" "diameter" ...
+ $ silinfo   :List of 3
+  ..$ widths         : num [1:150, 1:3] 1 1 1 1 1 1 1 1 1 1 ...
+  .. ..- attr(*, "dimnames")=List of 2
+  .. .. ..$ : chr [1:150] "2" "5" "39" "10" ...
+  .. .. ..$ : chr [1:3] "cluster" "neighbor" "sil_width"
+  ..$ clus.avg.widths: num [1:3] 0.767 0.758 0.752
+  ..$ avg.width      : num 0.759
+ $ diss      : NULL
+ $ call      : language pam(x = data, k = 3, metric = "euclidean", nstart = 100)
+ $ data      : num [1:150, 1:2] -0.2802 -0.1151 0.7794 0.0353 0.0646 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:2] "x" "y"
+ - attr(*, "class")= chr [1:2] "pam" "partition"</code></pre>
+</div>
+</div>
+<p>We see that there are several things included in the output of the <code>pam</code> function. The ones to mainly keep in mind are <code>clustering</code>, which corresponds to the cluster allocation, and <code>medoids</code>, which includes the cluster medoids (these are actual observations in our data set). We also provide an illustration of the result below:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert integer values to factors</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data_copy<span class="sc">$</span>pam_euclid <span class="ot">&lt;-</span> <span class="fu">factor</span>(data_pam_euclid<span class="sc">$</span>clustering)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert centers to data frames with proper column names</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>pam_euclid_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data_pam_euclid<span class="sc">$</span>medoids)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>pam_euclid_df<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(pam_euclid_df))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pam_euclid_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"cluster"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data_copy, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> pam_euclid)) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> pam_euclid_df, </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> pam_euclid_df, </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> cluster), </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PAM solution with Euclidean distance"</span>) <span class="sc">+</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>p3 <span class="sc">/</span> p4</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="kmeans_pam_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="think-note">
+<p>❓ <strong>Is there no stopping criterion in PAM?</strong></p>
+<p>Yes, this is either convergence of the algorithm or exceeding <span class="math inline">\(t^\text{max}\)</span> as mentioned in the earlier steps. However, the <code>pam</code> function does not include the latter and runs until it reaches convergence.</p>
+</div>
+<p>Alternative dissimilarities can be used for PAM. The <code>metric</code> input argument only accepts <code>"euclidean"</code> or <code>"manhattan"</code>, in which case a dissimilarity matrix is constructed internally and it is then used for cluster allocation. However, let us suppose we wish to use the Minkowski distance with power <span class="math inline">\(p = 3\)</span>. In such a case, we can construct the dissimilarity/distance matrix with the <code>dist</code> function and pass it as our main input argument <code>x</code> to <code>pam</code>, setting <code>diss = TRUE</code> to indicate that the main input argument <code>x</code> is a dissimilarity/distance matrix. Notice that when you input a distance/matrix, the <code>medoids</code> output only gives the observation indices for the medoids and not the actual points.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mink3_distmat <span class="ot">&lt;-</span> <span class="fu">dist</span>(<span class="at">x =</span> data,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">method =</span> <span class="st">"minkowski"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">p =</span> <span class="dv">3</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>data_pam_mink3 <span class="ot">&lt;-</span> <span class="fu">pam</span>(<span class="at">x =</span> mink3_distmat,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">k =</span> <span class="dv">3</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">diss =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nstart =</span> <span class="dv">100</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert integer values to factors</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>data_copy<span class="sc">$</span>pam_mink3 <span class="ot">&lt;-</span> <span class="fu">factor</span>(data_pam_mink3<span class="sc">$</span>clustering)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert centers to data frames with proper column names</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>pam_mink3_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data[data_pam_mink3<span class="sc">$</span>medoids, ])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>pam_mink3_df<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(pam_mink3_df))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pam_mink3_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"cluster"</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create plot</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data_copy, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> pam_mink3)) <span class="sc">+</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> pam_mink3_df, </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> pam_mink3_df, </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> cluster), </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PAM solution with Minkowski (p = 3) distance"</span>) <span class="sc">+</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>p3 <span class="sc">/</span> p4 <span class="sc">/</span> p5</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="kmeans_pam_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="funfact-box">
+<p>🚀 <strong>Time to practice!</strong></p>
+<p>The iris data set includes three iris species with 50 samples each as well as some properties about each flower. Load the <code>iris</code> data in <code>R</code> (just use <code>data(iris)</code> to load it to your working environment). Remove the final column that corresponds to the Species of the iris flowers and use the remaining columns to run clustering. Use K-Means or PAM with dissimilarity functions of your choice and compare your results. Change some of the input arguments of <code>kmeans</code> and <code>pam</code> and check what happens.</p>
+<p><em>(You may find it helpful to look up the documentation of <code>kmeans</code> and <code>pam</code> by typing <code>?kmeans</code> and <code>?pam</code> in your console).</em></p>
+</div>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key takeaways</h2>
+<ul>
+<li>Partitional clustering algorithms divide a data set into a fixed number of exhaustive, non-overlapping clusters.</li>
+<li>K-Means is a partitional clustering algorithm that seeks to minimise the within-cluster-variance.</li>
+<li>K-Medoids is a generalisation of K-Means to use any dissimilarity function but requires cluster representative points to be actual observations from the data set.</li>
+<li>Both K-Means and K-Medians are sensitive to initialisation.</li>
+<li>K-Means and K-Medoids are implemented in <code>R</code> using <code>kmeans</code> and <code>pam</code>, respectively.</li>
+</ul>
+
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,85 @@
+---
+title: "A First Tutorial on Cluster Analysis"
+---
+
+## Welcome
+
+This page includes some basic material on cluster analysis (clustering).
+
+The materials presented were created by [Efthymios Costa](https://efthymioscosta.github.io/) and they serve as an introduction to dissimilarity-based clustering, involving partitional and hierarchical clustering of continuous data. The intended reader is an undergraduate student who is familiar with basic concepts of statistics and analysis.
+
+Clustering is, roughly speaking, the task of detecting group structures in data sets. It has been used for several applications, such as customer segmentation, gene identification, fraud detection, or document classification, among others. The goal of these materials is to familiarise the reader with some basic clustering concepts and allow them to apply these on some data set that is of interest to them.
+
+## Content
+
+We will have several sessions/workshops. These will be focusing on different aspects of cluster analysis.
+
+0.  [Introduction: What is clustering?](about.qmd)
+1.  [Distances & Dissimilarities](dists.qmd)
+2.  [Partitional Clustering](kmeans_pam.qmd)
+3.  [Hierarchical Clustering](hclust.qmd)
+4.  [Number Of Clusters & Evaluation](evalmetrics.qmd)
+
+Some ideas on possible projects are included in [Project Ideas](projectideas.qmd), together
+with links to two data repositories.
+
+## Software
+
+The tutorials will make use of the `R` programming language [@Rlang] and it is recommended
+that certain packages are installed in advance. Make sure you have downloaded R and RStudio,
+then go to the Console of RStudio and paste the following:
+
+```{r}
+#| eval: false
+required_pkgs <- c("aricode",
+                   "cluster",
+                   "factoextra",
+                   "GGally",
+                   "ggplot2",
+                   "patchwork")
+install.packages(required_pkgs)
+```
+
+Notice that this may take a bit of time. Additional packages can be used if you wish
+to use specific functions not available in the packages listed above.
+
+## Reading List
+
+There are several textbooks available that include the materials covered here and much more
+about clustering. The following provide excellent starting points for exploring clustering
+in more depth:
+
+> Kaufman L, Rousseeuw P.J. (1990). *Finding Groups in Data: an Introduction to Cluster Analysis*. John Wiley & Sons
+
+> James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). *An introduction to statistical learning with applications in R* \[Chapter 12. Unsupervised Learning\].
+
+> Hennig, C., Meila, M., Murtagh, F., & Rocci, R. (Eds.). (2015). *Handbook of cluster analysis*. CRC press.
+
+## Citation
+
+If you use these resources in your work, please cite as follows:
+
+> Costa, E. (2026). *A First Tutorial on Cluster Analysis* \[Course materials\]. TBC.
+
+```         
+@online{costa2026clustering,
+  author = {Efthymios Costa},
+  title = {A {F}irst {T}utorial on {C}luster {A}nalysis},
+  year = {2026},
+  note = {[Course materials]},
+  url = {TBC}
+}
+```
+
+## License
+
+The content of this website is published under the [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) license. This license lets you distribute, remix, adapt, and build upon this work, even commercially, on the condition that you give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+
+## About this Website
+
+This website was built using Quarto. To learn more about Quarto websites visit: <https://quarto.org/docs/websites>.
+
+## References
+
+::: {#refs}
+:::

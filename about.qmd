@@ -1,0 +1,55 @@
+---
+title: "0. Introduction: What is clustering?"
+---
+
+## What is clustering?
+
+If you try to define the term "cluster", you will often find yourself not being precise enough. Roughly speaking, a cluster is any arbitrary group of observations and a clustering is a collection of clusters, i.e. a partition of objects.
+
+Suppose we have observations indexed as $1, \ldots, n$ and a set $\mathcal{C} = \{ C_1, \ldots, C_K\}, K \in \mathbb{N}$. Then, the following need to hold for $\mathcal{C}$ to be a valid clustering into $K$ clusters:
+
+1.  $C_i \neq \varnothing \forall i \in \{1, \ldots, K\}$,
+2.  $C_i \cap C_j = \varnothing \forall i\neq j$,
+3.  $\bigcup\limits_{i=1}^K C_i = \{1, \ldots, n\}$.
+
+::: {.callout-note icon="false"}
+## 🤔 Quiz: Which of the following is a valid partition of $\{1, \ldots, 5 \}$ into $K = 3$ clusters?
+
+A. $\mathcal{C} = \{ \{1, 2\}, \{2, 5\}, \{3, 4\} \}$\
+B. $\mathcal{C} = \{ \{1, 3\}, \{2, 5\}, \{4\} \}$\
+C. $\mathcal{C} = \{ \{1, 5\}, \{\}, \{2, 3, 4\} \}$\
+D. $\mathcal{C} = \{ \{2\}, \{5\}, \{3, 4 \} \}$\
+
+<details>
+
+<summary>Show Answer</summary>
+
+**B.** $\mathcal{C} = \{ \{1, 3\}, \{2, 5\}, \{4\} \}$
+
+The rest of the answers violate the definition of a partition. Can you see why?
+
+</details>
+:::
+
+## Does any partition count?
+
+Any partition of our observations can be considered a valid clustering. So is there a way to guide the process and assign objects into groups so that they are meaningful? Turns out that this is possible, as long as we define some desirable characteristics or properties that we want our groups to possess. A very insightful (and rather philosophical) paper that summarises such properties is @hennig2015true. Briefly, some things we typically wish to have are:
+
+1.  Highly similar objects are assigned into the same cluster.
+2.  Highly dissimilar objects are assigned into distinct clusters.
+3.  Clusters are stable, so that re-clustering should not produce a different group structure.
+4.  There are not too many clusters, effectively summarising different modes in the data.
+5.  Clusters can be well-represented by observations that are central to each group.
+
+There are many more characteristics that one may wish to get; **when developing a clustering algorithm, it is always important to have your ultimate goal as your guide.**
+
+## Clustering in a nutshell
+
+![Clustering in a nutshell - Source: Author's own work](figs/clustering_comic.png)
+
+The comic illustration above shows how clustering typically works; similar observations are assigned in the same cluster, whereas dissimilar items are in distinct clusters. How do we compute similarities between objects though? This is what we are exploring in more detail in [1. Distances & Dissimilarities](dists.qmd).
+
+## References
+
+::: {#refs}
+:::

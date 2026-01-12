@@ -1,0 +1,192 @@
+---
+title: "1. Distances & Dissimilarities"
+---
+
+## What is a distance?
+
+**Definition (Distance Function/Metric):** A distance function, also known as a metric, is a function $d: M \times M \rightarrow \mathbb{R}$, where $M$ is a set, satisfying the following:
+
+1.  $d(x, y) \geq 0 \forall x, y \in M$ (Non-negativity),
+2.  $d(x,y) = d(y, x) \forall x,y \in M$ (Symmetry),
+3.  $d(x, y) = 0 \iff x = y$ (Indiscernibles),
+4.  $d(x, z) \leq d(x, y) + d(y, z) \forall x,y,z \in M$ (Triangle inequality)
+
+## The Euclidean distance
+
+**Definition (Euclidean distance on** $\mathbb{R}^d$): The Euclidean distance between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
+d_E(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \| = \sqrt{\sum\limits_{j=1}^d (x_j - y_j)^2}.
+$$ The Euclidean distance is one of the most basic and most useful distance functions that you are probably already familiar with. It can be calculated in any finite dimension $p$ and has a very intuitive interpretation as the length of the line segment between any two observations.
+
+**Example:** The Euclidean distance on $\mathbb{R}^d$ is a valid distance function. Let's prove this:
+
+**1. Non-negativity:**
+
+Since $(x_j - y_j)^2 \geq 0$ for all $j$, we have $\sum_{j=1}^d (x_j - y_j)^2 \geq 0$. Taking the square root preserves non-negativity, so $d_E(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{j=1}^d (x_j - y_j)^2} \geq 0$.
+
+**2. Symmetry:**
+
+$$d_E(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{j=1}^d (x_j - y_j)^2} = \sqrt{\sum_{j=1}^d (y_j - x_j)^2} = d_E(\mathbf{y}, \mathbf{x}),$$
+
+since $(x_j - y_j)^2 = (y_j - x_j)^2$.
+
+**3. Identity of indiscernibles:**
+
+$(\Rightarrow)$ If $d_E(\mathbf{x}, \mathbf{y}) = 0$, then $\sqrt{\sum_{j=1}^d (x_j - y_j)^2} = 0$, which implies $\sum_{j=1}^d (x_j - y_j)^2 = 0$. Since each term $(x_j - y_j)^2 \geq 0$ and their sum is zero, we must have $(x_j - y_j)^2 = 0$ for all $j$, therefore $x_j = y_j \forall j \in \{1, \ldots, d\}$, so $\mathbf{x} = \mathbf{y}$.
+
+$(\Leftarrow)$ If $\mathbf{x} = \mathbf{y}$, then $x_j = y_j$ for all $j$, so $d_E(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{j=1}^d 0^2} = 0$.
+
+**4. Triangle inequality:**
+
+We need to show $d_E(\mathbf{x}, \mathbf{z}) \leq d_E(\mathbf{x}, \mathbf{y}) + d_E(\mathbf{y}, \mathbf{z})$, or equivalently: $$\|\mathbf{x} - \mathbf{z}\| \leq \|\mathbf{x} - \mathbf{y}\| + \|\mathbf{y} - \mathbf{z}\|.$$
+
+Note that $\mathbf{x} - \mathbf{z} = (\mathbf{x} - \mathbf{y}) + (\mathbf{y} - \mathbf{z})$. By the Cauchy-Schwarz inequality and properties of norms in $\mathbb{R}^d$, we have: $$\|\mathbf{x} - \mathbf{z}\| = \|(\mathbf{x} - \mathbf{y}) + (\mathbf{y} - \mathbf{z})\| \leq \|\mathbf{x} - \mathbf{y}\| + \|\mathbf{y} - \mathbf{z}\|.$$
+
+This is the standard triangle inequality for the Euclidean norm. $\square$
+
+## The Manhattan distance
+
+**Definition (Manhattan distance on $\mathbb{R}^d$):** The Manhattan distance (also known as taxicab, city block, or rectilinear distance) between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
+d_T(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \|_T = \sum\limits_{j=1}^d \lvert x_j - y_j\rvert.
+$$ The Manhattan distance makes use of the so-called *Manhattan geometry*, where the distance between any two points is defined as the sum of the absolute differences of their Cartesian coordinates.
+
+::: funfact-box
+💡 **Fun fact**
+
+The reason it's called the "Manhattan", "taxicab", or "city block" distance is because of the famous borough of Manhattan in New York City, which is planned with a rectangular grid of streets, meaning that a taxicab can only travel along grid directions.
+:::
+
+::: {.callout-note icon="false"}
+## 🤔 Quiz: Which of the following line colours in the Figure illustrate the Euclidean distance between $(0, 0)$ and $(6, 6)$ and which illustrate the Manhattan distance?
+
+![](figs/taxicab_vs_euclidean.png){fig-align="center"}
+
+A. **Euclidean:** Yellow, **Manhattan:** Red, Blue, Green\
+B. **Euclidean:** Blue, Red, **Manhattan:** Yellow, Green\
+C. **Euclidean:** Blue, Red, Yellow **Manhattan:** Green\
+D. **Euclidean:** Green, **Manhattan:** Blue, Red Yellow\
+
+<details>
+
+<summary>Show Answer</summary>
+
+**D.** **Euclidean:** Green, **Manhattan:** Blue, Red Yellow
+
+Can you compute the Euclidean and Manhattan distances represented by each line?
+
+</details>
+:::
+
+## The Minkowski distance
+
+**Definition (Minkowski distance on $\mathbb{R}^d$):** The Minkowski distance between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
+d_M(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \|_M = \left(\sum\limits_{j=1}^d \lvert x_j - y_j\rvert^p\right)^{\frac{1}{p}}, \quad p \geq 1.
+$$ You can see that the Minkowski distance is the Manhattan distance for $p=1$ and the Euclidean distance for $p=2$. The Minkowski distance is a generalisation of both!
+
+::: funfact-box
+💡 **Fun fact**
+
+When $p \rightarrow \infty$, the Minkowski distance becomes equivalent to: $$
+\lim\limits_{p \rightarrow \infty} \left( \sum\limits_{j=1}^d \lvert x_j - y_j \rvert^p \right)^{\frac{1}{p}} = \max\limits_{1 \leq j \leq d} \lvert x_j - y_j \rvert,
+$$ which is known as the *Chebyshev distance*; can you prove this result?
+:::
+
+The Figure below displays the "unit circles" for the Minkowski distance with varying $p$. Notice that $p = 0.5$ is also included; this does not define a proper distance function.
+
+![Unit circles for the Minkowski distance with varying p values. Source: Author's own work.](figs/minkowski_circs){fig-align="center"}
+
+## Dissimilarities vs. Distances
+
+**Definition (Dissimilarity Function):** A dissimilarity is a function $d: M \times M \rightarrow \mathbb{R}$, where $M$ is a set, satisfying the following:
+
+1.  $d(x, y) \geq 0 \forall x, y \in M$ (Non-negativity),
+2.  $d(x,y) = d(y, x) \forall x,y \in M$ (Symmetry),
+3.  $d(x, y) = 0 \iff x = y$ (Indiscernibles)
+
+A dissimilarity function relaxes the requirement for the triangle inequality to hold. This is precisely what distinguishes a dissimilarity from a distance function. Therefore, **all distance functions are valid dissimilarity functions**. However, the opposite direction is not always true!
+
+**Example:** The Minkowski function with $p=0.5$ is a dissimilarity function but not a distance function.
+
+Let's prove this together; firstly, we note that the 3 shared conditions (non-negativity, symmetry, indiscernibles) are trivially true. We only need to check for the triangle inequality.
+
+Let us take $\mathbf{x} = (0, 0)^\top$, $\mathbf{y} = (1, 1)^\top$ and $\mathbf{z} = (0, 1)^\top$. Then: $$
+\begin{align}
+d_M(\mathbf{x}, \mathbf{y}) = \left(\sum\limits_{j=1}^d \lvert x_j - y_j\rvert^\frac{1}{2}\right)^{2} = (1 + 1)^2 = 4,\\
+d_M(\mathbf{x}, \mathbf{z}) = \left(\sum\limits_{j=1}^d \lvert x_j - y_j\rvert^\frac{1}{2}\right)^{2} = (0 + 1)^2 = 1,\\
+d_M(\mathbf{y}, \mathbf{z}) = \left(\sum\limits_{j=1}^d \lvert x_j - y_j\rvert^\frac{1}{2}\right)^{2} = (0 + 1)^2 = 1.
+\end{align}
+$$ Therefore, $d_M(\mathbf{x}, \mathbf{y}) > d_M(\mathbf{x}, \mathbf{z}) + d_M(\mathbf{y}, \mathbf{z})$, which means that the triangle inequality does not hold. Therefore, the Minkowski distance with $p = 0.5$ is a dissimilarity but not a distance function. $\square$
+
+::: funfact-box
+💡 **Fun fact**
+
+The Minkowski function with $0 < p < 1$ is a dissimilarity function but not a proper metric *(can you prove this?)*, whereas for $p \geq 1$, it is a distance function.
+:::
+
+::: {.callout-note icon="false"}
+## 🤔 Quiz: Some of the following functions are valid distance functions, while others are dissimilarities but not distances. Which of these are distance functions?
+
+A. $d(\mathbf{x}, \mathbf{y}) = \sum\limits_{j=1}^d \frac{\lvert x_j - y_j \rvert}{\lvert x_j \rvert + \lvert y_j \rvert}$.\
+B. $d(\mathbf{x}, \mathbf{y}) = 1 - \frac{\mathbf{x} \cdot \mathbf{y}}{\| \mathbf{x} \| \| \mathbf{y} \|}$.\
+C. $d(\mathbf{x}, \mathbf{y}) = \sum\limits_{j=1}^d \mathbb{I}\{ x_j \neq y_j\}$ for binary vectors $\mathbf{x}, \mathbf{y}$.\
+D. $d(\mathbf{x}, \mathbf{y}) = \min\limits_{1 \leq j \leq d} \lvert x_j - y_j \rvert$.\
+E. $d(\mathbf{x}, \mathbf{y}) = \sqrt{\left(\mathbf{x} - \mathbf{y}\right)^\top \mathbf{S}^{-1}\left(\mathbf{x} - \mathbf{y}\right)}$, where $\mathbf{S} \in \mathbb{R}^{d \times d}$ is positive definite.\
+
+<details>
+
+<summary>Show Answer</summary>
+
+**C. & E.**
+
+Can you explain why the rest of the functions are not valid distances?
+
+</details>
+:::
+
+## Similarities
+
+**Definition (Similarity Function):** Given a dissimilarity function $d: M \times M \rightarrow \mathbb{R}$, a similarity function is a defined as $s : M \times M \rightarrow [0, 1]$ with $s(\mathbf{x}, \mathbf{y}) = f(d(\mathbf{x}, \mathbf{y}))$, where $f:[0, \infty) \rightarrow [0, 1]$ is a decreasing function with $f(0) = 1$ and $\lim\limits_{t \rightarrow \infty} f(t) = 0$.
+
+**Example:** Let $f(t) = \exp\left( - \frac{t^2}{2\gamma^2} \right)$ for $\gamma > 0$. The following function is a valid similarity: $$
+s(\mathbf{x}, \mathbf{y}) = f(d_E(\mathbf{x}, \mathbf{y})) = \exp\left\{ - \frac{\sum\limits_{j=1}^d (x_j - y_j)^2}{2\gamma^2} \right\}, \gamma > 0, \mathbf{x}, \mathbf{y} \in \mathbb{R}^d.
+$$ This is also known as the **Gaussian kernel** or **Radial Basis Function (RBF) kernel** *(you do not need to know what a kernel is at this point, but it is a very useful concept in machine learning)*.
+
+Other options for $f$ include:
+
+1.  $f(t) = \exp(-t)$
+2.  $f(t) = \frac{1}{1 + t}$
+3.  $f(t) = \frac{1}{1 + t^2}$
+4.  $f(t) = \max \left(0, 1 - \frac{t}{\tau}\right), \ \tau > 0$
+5.  $f(t) = 1- \frac{2}{\pi}\arctan (\alpha t), \ \alpha > 0$
+
+::: {.callout-note icon="false"}
+## 🤔 Quiz: Is the following function a valid option for defining a proper similarity function?
+
+$$
+f(t) = 
+\begin{cases} 
+1, & \text{if } t = 0, \\
+0, & \text{otherwise.}  
+\end{cases}
+$$
+
+A. Yes\
+B. No\
+
+<details>
+
+<summary>Show Answer</summary>
+
+**A. Yes**
+
+Can you explain why? Do you think that using this function to define similarities would be useful?
+
+</details>
+:::
+
+## Key takeaways
+
+-   Clustering algorithms use distances, dissimilarities, or similarities to assign objects into groups.
+-   Points with low pairwise distances/dissimilarities are commonly assigned in the same cluster, whereas highly distant/dissimilar points are in distinct clusters.
+-   All distances are dissimilarities but not the other way round.
+-   The triangle inequality is what makes a dissimilarity function a proper distance function.
+-   Large distance/dissimilarity $\implies$ low similarity, while low distance/dissimilarity $\implies$ high similarity.
