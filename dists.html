@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -179,6 +214,7 @@ window.Quarto = {
   <li><a href="#the-minkowski-distance" id="toc-the-minkowski-distance" class="nav-link" data-scroll-target="#the-minkowski-distance">The Minkowski distance</a></li>
   <li><a href="#dissimilarities-vs.-distances" id="toc-dissimilarities-vs.-distances" class="nav-link" data-scroll-target="#dissimilarities-vs.-distances">Dissimilarities vs.&nbsp;Distances</a></li>
   <li><a href="#similarities" id="toc-similarities" class="nav-link" data-scroll-target="#similarities">Similarities</a></li>
+  <li><a href="#computing-distances-in-r" id="toc-computing-distances-in-r" class="nav-link" data-scroll-target="#computing-distances-in-r">Computing distances in <code>R</code></a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key takeaways</a></li>
   </ul>
 </nav>
@@ -236,7 +272,7 @@ d_E(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \| = \sqrt{\sum\limits_
 </section>
 <section id="the-manhattan-distance" class="level2">
 <h2 class="anchored" data-anchor-id="the-manhattan-distance">The Manhattan distance</h2>
-<p><strong>Definition (Manhattan distance on <span class="math inline">\(\mathbb{R}^d\)</span>):</strong> The Manhattan distance (also known as taxicab, city block, or rectilinear distance) between two points <span class="math inline">\(\mathbf{x}, \mathbf{y} \in \mathbb{R}^d\)</span> is defined as follows: <span class="math display">\[
+<p><strong>Definition (Manhattan distance on</strong> <span class="math inline">\(\mathbb{R}^d\)</span>): The Manhattan distance (also known as taxicab, city block, or rectilinear distance) between two points <span class="math inline">\(\mathbf{x}, \mathbf{y} \in \mathbb{R}^d\)</span> is defined as follows: <span class="math display">\[
 d_T(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \|_T = \sum\limits_{j=1}^d \lvert x_j - y_j\rvert.
 \]</span> The Manhattan distance makes use of the so-called <em>Manhattan geometry</em>, where the distance between any two points is defined as the sum of the absolute differences of their Cartesian coordinates.</p>
 <div class="funfact-box">
@@ -267,15 +303,19 @@ D. <strong>Euclidean:</strong> Green, <strong>Manhattan:</strong> Blue, Red Yell
 <summary>
 Show Answer
 </summary>
-<p><strong>D.</strong> <strong>Euclidean:</strong> Green, <strong>Manhattan:</strong> Blue, Red Yellow</p>
-<p>Can you compute the Euclidean and Manhattan distances represented by each line?</p>
+<!-- **D.** **Euclidean:** Green, **Manhattan:** Blue, Red Yellow
+
+Can you compute the Euclidean and Manhattan distances represented by each line?
+-->
+<p><strong>Error 404: Answer not found.</strong></p>
+<em>But seriously, think about it this way; if each square is a building and the lines are the roads, which of these routes could a taxi take?</em> 🚕
 </details>
 </div>
 </div>
 </section>
 <section id="the-minkowski-distance" class="level2">
 <h2 class="anchored" data-anchor-id="the-minkowski-distance">The Minkowski distance</h2>
-<p><strong>Definition (Minkowski distance on <span class="math inline">\(\mathbb{R}^d\)</span>):</strong> The Minkowski distance between two points <span class="math inline">\(\mathbf{x}, \mathbf{y} \in \mathbb{R}^d\)</span> is defined as follows: <span class="math display">\[
+<p><strong>Definition (Minkowski distance on</strong> <span class="math inline">\(\mathbb{R}^d\)</span>): The Minkowski distance between two points <span class="math inline">\(\mathbf{x}, \mathbf{y} \in \mathbb{R}^d\)</span> is defined as follows: <span class="math display">\[
 d_M(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \|_M = \left(\sum\limits_{j=1}^d \lvert x_j - y_j\rvert^p\right)^{\frac{1}{p}}, \quad p \geq 1.
 \]</span> You can see that the Minkowski distance is the Manhattan distance for <span class="math inline">\(p=1\)</span> and the Euclidean distance for <span class="math inline">\(p=2\)</span>. The Minkowski distance is a generalisation of both!</p>
 <div class="funfact-box">
@@ -334,8 +374,12 @@ E. <span class="math inline">\(d(\mathbf{x}, \mathbf{y}) = \sqrt{\left(\mathbf{x
 <summary>
 Show Answer
 </summary>
-<p><strong>C. &amp; E.</strong></p>
-<p>Can you explain why the rest of the functions are not valid distances?</p>
+<!-- **C. & E.**
+
+Can you explain why the rest of the functions are not valid distances?
+-->
+<p><strong>This answer is currently in an entangled quantum state with your understanding.</strong></p>
+<em>Observe it too soon and you’ll collapse the learning wave function.</em> ⚛️
 </details>
 </div>
 </div>
@@ -378,10 +422,50 @@ B. No<br>
 <summary>
 Show Answer
 </summary>
-<p><strong>A. Yes</strong></p>
-<p>Can you explain why? Do you think that using this function to define similarities would be useful?</p>
+<!--
+
+**A. Yes**
+
+Can you explain why? Do you think that using this function to define similarities would be useful?
+-->
+<p><strong>If I give you the answer now, what’s the similarity between actual learning and just reading answers?</strong></p>
+<em>Exactly: <span class="math inline">\(f(\text{similarity}) = 0\)</span>. Check back after class!</em> 😉
 </details>
 </div>
+</div>
+</section>
+<section id="computing-distances-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="computing-distances-in-r">Computing distances in <code>R</code></h2>
+<p>The <code>dist</code> function provides an easy and quick way of computing distances (or dissimilarities) in <code>R</code>. The output is a distance/dissimilarity matrix, which you can also visualise! Below is a toy example with 50 randomly generated 2-dimensional vectors, where each component is drawn from a standard Uniform distribution.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the seed for reproducibility</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 50 2D random vectors = 100 standard uniform values</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Store in a 50 x 2 matrix</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">nrow =</span> <span class="dv">50</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>dist_mat <span class="ot">&lt;-</span> <span class="fu">dist</span>(<span class="at">x =</span> X, <span class="at">method =</span> <span class="st">"euclidean"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(<span class="fu">as.matrix</span>(dist_mat, <span class="at">nrow =</span> <span class="dv">50</span>, <span class="at">ncol =</span> <span class="dv">50</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="dists_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>image</code> function produces a heat map but notice how it requires an argument of class <code>matrix</code>. Therefore, we make sure to convert our distance matrix object to a <code>matrix</code> object and specify the number of rows and columns, which has to be equal to <span class="math inline">\(n\)</span>.</p>
+<div class="funfact-box">
+<p>💡 <strong>Fun fact</strong></p>
+<p>The <code>dist</code> function supports several distance metrics. Explore its documentation by typing <code>?dist</code> on the console and see what other distance functions can be implemented, besides the Euclidean. How would you compute the dissimilarity matrix for a dissimilarity function that is not included in the documentation?</p>
+</div>
+<div class="practice-box">
+<p>🚀 <strong>Time to practice!</strong></p>
+<p>Generate some synthetic data (e.g.&nbsp;by sampling from a uniform or a Normal distribution) and use the <code>dist</code> function with any distance function of your choice. Repeat this process but keep increasing the number of dimensions. What do you observe?</p>
+<p><em>(Hint: Use the <code>image</code> function to visualise the distance matrix each time)</em>.</p>
 </div>
 </section>
 <section id="key-takeaways" class="level2">
@@ -392,6 +476,7 @@ Show Answer
 <li>All distances are dissimilarities but not the other way round.</li>
 <li>The triangle inequality is what makes a dissimilarity function a proper distance function.</li>
 <li>Large distance/dissimilarity <span class="math inline">\(\implies\)</span> low similarity, while low distance/dissimilarity <span class="math inline">\(\implies\)</span> high similarity.</li>
+<li>The <code>dist</code> function in <code>R</code> can be used for computing a distance matrix.</li>
 </ul>
 
 

@@ -257,11 +257,11 @@ window.Quarto = {
 <div class="funfact-box">
 <p>💡 <strong>Fun fact</strong></p>
 <p>The name “K-Means” is not random. The algorithm was named like that because it seeks to minimise the distance between points and their respective cluster’s mean, denoted by <span class="math inline">\(\mathbf{m}_k\)</span> for cluster <span class="math inline">\(1 \leq k \leq K\)</span> above. The <span class="math inline">\(\mathbf{m}_k\)</span>’s are called the cluster <strong>centroids</strong> as they are the most centrally-located observations in their cluster. Can you prove this result?</p>
-<p><em>(Hint: Fix a cluster <span class="math inline">\(k\)</span> and differentiate with respect to <span class="math inline">\(\mathbf{m}_k\)</span>. Do you get <span class="math inline">\(\mathbf{m}_k = \frac{1}{\lvert C'_k \rvert} \sum\limits_{i: \mathbf{x}_i \in C'_k} \mathbf{x}_i\)</span>?)</em></p>
+<p><em>(Hint: Fix a cluster</em> <span class="math inline">\(k\)</span> and differentiate with respect to <span class="math inline">\(\mathbf{m}_k\)</span>. Do you get <span class="math inline">\(\mathbf{m}_k = \frac{1}{\lvert C'_k \rvert} \sum\limits_{i: \mathbf{x}_i \in C'_k} \mathbf{x}_i\)</span>?)</p>
 </div>
 <div class="think-note">
 <p>❓ <strong>Do I have to use the Euclidean distance?</strong></p>
-<p>Yes, if you want to work strictly with K-Means! However, you can use any distance or dissimilarity function of your choice; this will simply be a different clustering algorithm! For instance, if you use the Manhattan distance, you will implement the <strong>K-Medians</strong> clustering algorithm. <em>(Can you see why it is called “K-Medians”?)</em></p>
+<p>No! You can use any distance or dissimilarity function of your choice! For instance, if you use the Manhattan distance, you will implement the <strong>K-Medians</strong> clustering algorithm. <em>(Can you see why it is called “K-Medians”?)</em></p>
 </div>
 </section>
 <section id="k-means-implementation" class="level2">
@@ -271,6 +271,7 @@ window.Quarto = {
 <li><strong>Initialise:</strong> Choose <span class="math inline">\(K\)</span> initial centroids <span class="math inline">\(\mathbf{m}_1^{(0)}, \ldots, \mathbf{m}_K^{(0)}\)</span>, set <span class="math inline">\(t \leftarrow 1\)</span> and <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>FALSE</code>.</li>
 <li><strong>Iterative steps:</strong> While <span class="math inline">\(t \leq t^\text{max}\)</span> and <code>converged</code> <span class="math inline">\(\neq\)</span> <code>TRUE</code> do:</li>
 </ol>
+<!-- -->
 <ol type="i">
 <li><p><strong>Assign:</strong> Assign each observation to the cluster with its nearest centroid: <span class="math display">\[
 C_k^{(t)} = \{\mathbf{x}: \| \mathbf{x} - \mathbf{m}_k^{(t-1)} \| \leq \| \mathbf{x} - \mathbf{m}_j^{(t-1)} \| \ \forall k \neq j \}.
@@ -281,10 +282,11 @@ C_k^{(t)} = \{\mathbf{x}: \| \mathbf{x} - \mathbf{m}_k^{(t-1)} \| \leq \| \mathb
 <li><p><strong>Convergence check:</strong> If <span class="math inline">\(\mathbf{m}_k^{(t)} = \mathbf{m}_k^{(t-1)} \ \forall 1 \leq k \leq K\)</span>, set <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>TRUE</code>.</p></li>
 <li><p><strong>Increment:</strong> Set <span class="math inline">\(t \leftarrow t + 1\)</span>.</p></li>
 </ol>
+<!-- -->
 <ol start="3" type="1">
 <li><strong>Output:</strong> Partition <span class="math inline">\(\mathcal{C} = \{C_1, \ldots, C_K \}\)</span>, centroids <span class="math inline">\(\mathbf{m}_1, \ldots, \mathbf{m}_K\)</span>.</li>
 </ol>
-<p>The iterative process in Step 2 is repeated until either convergence is achieved <em>(i.e.&nbsp;cluster assignments remain unchanged)</em> or until a maximum number of iterations <span class="math inline">\(t^\text{max}\)</span> is reached. The K-Means algorithm usually converges in a few steps, so it’s only a matter of choosing <span class="math inline">\(t^\text{max}\)</span> not to be too small <em>(e.g.&nbsp;<span class="math inline">\(t^\text{max} = 2\)</span> is not enough)</em>.</p>
+<p>The iterative process in Step 2 is repeated until either convergence is achieved <em>(i.e.&nbsp;cluster assignments remain unchanged)</em> or until a maximum number of iterations <span class="math inline">\(t^\text{max}\)</span> is reached. The K-Means algorithm usually converges in a few steps, so it’s only a matter of choosing <span class="math inline">\(t^\text{max}\)</span> not to be too small <em>(e.g.</em> <span class="math inline">\(t^\text{max} = 2\)</span> is not enough).</p>
 </section>
 <section id="k-means-in-r" class="level2">
 <h2 class="anchored" data-anchor-id="k-means-in-r">K-Means in <code>R</code></h2>
@@ -493,6 +495,7 @@ C_k^{(t)} = \{\mathbf{x}: \| \mathbf{x} - \mathbf{m}_k^{(t-1)} \| \leq \| \mathb
 <li><strong>Initialise:</strong> Choose <span class="math inline">\(K\)</span> initial medoids <span class="math inline">\(M^{(0)} = \{\mathbf{m}_1^{(0)}, \ldots, \mathbf{m}_K^{(0)}\}\)</span>, set <span class="math inline">\(t \leftarrow 1\)</span> and <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>FALSE</code>.</li>
 <li><strong>Iterative steps:</strong> While <span class="math inline">\(t \leq t^\text{max}\)</span> and <code>converged</code> <span class="math inline">\(\neq\)</span> <code>TRUE</code> do:</li>
 </ol>
+<!-- -->
 <ol type="i">
 <li><p><strong>Assign:</strong> Assign each point to nearest medoid: <span class="math display">\[
    C^{(t)}_k = \{\mathbf{x} \in \mathbf{X} : d(\mathbf{x}, \mathbf{m}^{(t-1)}_k) \leq d(\mathbf{x}, \mathbf{m}^{(t-1)}_j) \ \forall j \neq k\}
@@ -501,6 +504,7 @@ C_k^{(t)} = \{\mathbf{x}: \| \mathbf{x} - \mathbf{m}_k^{(t-1)} \| \leq \| \mathb
 <li><p><strong>Convergence check:</strong> If <span class="math inline">\(\mathbf{m}_k^{(t)} = \mathbf{m}_k^{(t-1)} \ \forall 1 \leq k \leq K\)</span>, set <code>converged</code> <span class="math inline">\(\leftarrow\)</span> <code>TRUE</code>.</p></li>
 <li><p><strong>Increment:</strong> Set <span class="math inline">\(t \leftarrow t + 1\)</span>.</p></li>
 </ol>
+<!-- -->
 <ol start="3" type="1">
 <li><strong>Output:</strong> Final partition and medoids.</li>
 </ol>
@@ -632,7 +636,7 @@ C_k^{(t)} = \{\mathbf{x}: \| \mathbf{x} - \mathbf{m}_k^{(t-1)} \| \leq \| \mathb
 </div>
 </div>
 </div>
-<div class="funfact-box">
+<div class="practice-box">
 <p>🚀 <strong>Time to practice!</strong></p>
 <p>The iris data set includes three iris species with 50 samples each as well as some properties about each flower. Load the <code>iris</code> data in <code>R</code> (just use <code>data(iris)</code> to load it to your working environment). Remove the final column that corresponds to the Species of the iris flowers and use the remaining columns to run clustering. Use K-Means or PAM with dissimilarity functions of your choice and compare your results. Change some of the input arguments of <code>kmeans</code> and <code>pam</code> and check what happens.</p>
 <p><em>(You may find it helpful to look up the documentation of <code>kmeans</code> and <code>pam</code> by typing <code>?kmeans</code> and <code>?pam</code> in your console).</em></p>

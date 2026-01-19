@@ -256,7 +256,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="agglomerative-clustering-implementation">Agglomerative Clustering Implementation</h2>
 <p>We present the steps used to perform hierarchical agglomerative clustering below:</p>
 <ol type="1">
-<li><strong>Initialise:</strong> Initialise <span class="math inline">\(n\)</span> clusters <span class="math inline">\(C_1 = \{ 1\}, \ldots, C_n = \{n\}\)</span> and <span class="math inline">\(t \leftarrow 1\)</span>.</li>
+<li><strong>Initialise:</strong> Initialise <span class="math inline">\(n\)</span> clusters <span class="math inline">\(C_1 = \{ \mathbf{x}_1\}, \ldots, C_n = \{\mathbf{x}_n\}\)</span> and <span class="math inline">\(t \leftarrow 1\)</span>.</li>
 <li><strong>Compute dissimilarities</strong>: Construct dissimilarity/distance matrix <span class="math inline">\(D^{(0)}\)</span> with <span class="math inline">\(D^{(0)}_{i,j} = d(\mathbf{x}_i, \mathbf{x}_j)\)</span> for a dissimilarity/distance function <span class="math inline">\(d\)</span>.</li>
 <li><strong>Recursive steps:</strong> Repeat the following steps until <span class="math inline">\(t = n-1\)</span>:</li>
 </ol>
@@ -267,7 +267,7 @@ window.Quarto = {
 <li><p><strong>Increment:</strong> Set <span class="math inline">\(t \leftarrow t + 1\)</span>.</p></li>
 </ol>
 <!-- -->
-<ol start="4" type="1">
+<ol start="3" type="1">
 <li><strong>Output:</strong> Cluster hierarchy.</li>
 </ol>
 <div class="funfact-box">
@@ -285,8 +285,8 @@ window.Quarto = {
 <table class="caption-top table">
 <caption>Linkage criteria</caption>
 <colgroup>
-<col style="width: 25%">
-<col style="width: 75%">
+<col style="width: 27%">
+<col style="width: 72%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -339,8 +339,12 @@ D. <span class="math inline">\(\sqrt{26}\)</span><br>
 <summary>
 Show Answer
 </summary>
-<p><strong>B.</strong> <span class="math inline">\(\sqrt{8}\)</span></p>
-<p>Try computing the dissimilarity between <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> using different linkage criteria. How does that change?</p>
+<!-- **B.** $\sqrt{8}$
+
+Try computing the dissimilarity between $C_1$ and $C_2$ using different linkage criteria. How does that change?
+-->
+<p>🧠 <strong>The answer is currently updating its linkage criteria…</strong></p>
+<em>Single linkage? Complete? Average? The answer is feeling indecisive. Check back after you’ve computed all four distances!</em>
 </details>
 </div>
 </div>
@@ -373,6 +377,7 @@ Show Answer
 </figure>
 </div>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rect.hclust(hc, k = 3, border = c("red", "blue", "darkgreen"))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="funfact-box">
 <p>💡 <strong>Fun fact</strong></p>
@@ -384,7 +389,7 @@ Show Answer
 </div>
 <p>The dendrogram above shows how the cluster hierarchy is formed. We can also inspect the output of our hierarchical clustering output <code>hc</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(hc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(hc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 7
  $ merge      : int [1:9, 1:2] -4 -3 -6 -5 -1 -2 2 3 7 -10 ...
@@ -404,7 +409,7 @@ Show Answer
 </ul>
 <p>For instance, if we look at our data set, <code>merge</code> looks like this:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(hc<span class="sc">$</span>merge)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(hc<span class="sc">$</span>merge)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1] [,2]
  [1,]   -4  -10
@@ -430,7 +435,7 @@ Show Answer
 <p>Step 9: Cluster 7 + Cluster 8 → Final cluster (<span class="math inline">\(\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10\}\)</span>)</p>
 <p>The associated dissimilarities that led to these merges are:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(hc<span class="sc">$</span>height)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(hc<span class="sc">$</span>height)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3333612 0.4213636 0.4213636 0.6456208 0.9737931 1.1188796 1.5318198
 [8] 2.1567316 4.6816562</code></pre>
@@ -442,18 +447,18 @@ Show Answer
 </div>
 <p>We now have our cluster hierarchy but how do we get access to the clusters? The idea is that we can “cut the tree” structure we got in the dendrogram and look at the clusters obtained. We can either cut at a specific height, or enforce a specific number of clusters. For instance, in the chunk below, we cut the tree into <span class="math inline">\(K=3\)</span> clusters and then we also cut it at a height of 3. Both actions can be performed using the <code>cutree</code> function. We can also visualise the obtained partitions on the dendrogram with <code>rect.hclust</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cut to get 3 clusters</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>hc_clust1 <span class="ot">&lt;-</span> <span class="fu">cutree</span>(<span class="at">tree =</span> hc,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="dv">3</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Cut at a height of 3</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>hc_clust2 <span class="ot">&lt;-</span> <span class="fu">cutree</span>(<span class="at">tree =</span> hc,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">h =</span> <span class="dv">3</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the hierarchy and obtained partitions</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hc, <span class="at">main =</span> <span class="st">"Hierarchical Clustering of European Cities by Climate"</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"City"</span>, <span class="at">ylab =</span> <span class="st">"Distance"</span>, <span class="at">sub =</span> <span class="st">""</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">border =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"darkgreen"</span>))</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc, <span class="at">h =</span> <span class="dv">3</span>, <span class="at">border =</span> <span class="fu">c</span>(<span class="st">"magenta"</span>, <span class="st">"orange"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cut to get 3 clusters</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hc_clust1 <span class="ot">&lt;-</span> <span class="fu">cutree</span>(<span class="at">tree =</span> hc,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">k =</span> <span class="dv">3</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Cut at a height of 3</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>hc_clust2 <span class="ot">&lt;-</span> <span class="fu">cutree</span>(<span class="at">tree =</span> hc,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">h =</span> <span class="dv">3</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the hierarchy and obtained partitions</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hc, <span class="at">main =</span> <span class="st">"Hierarchical Clustering of European Cities by Climate"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"City"</span>, <span class="at">ylab =</span> <span class="st">"Distance"</span>, <span class="at">sub =</span> <span class="st">""</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">border =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"darkgreen"</span>))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc, <span class="at">h =</span> <span class="dv">3</span>, <span class="at">border =</span> <span class="fu">c</span>(<span class="st">"magenta"</span>, <span class="st">"orange"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -467,7 +472,7 @@ Show Answer
 <p>❓ <strong>Agglomerative vs.&nbsp;Divisive hierarchical clustering</strong></p>
 <p>Agglomerative clustering is sometimes referred to as a “bottom-up” approach, whereas the term “top-down” is used to describe divisive clustering. Can you explain why? Relate your answer to the denrogram and what it illustrates.</p>
 </div>
-<div class="funfact-box">
+<div class="practice-box">
 <p>🚀 <strong>Time to practice!</strong></p>
 <p>The mtcars data set includes eleven features related to the design and the performance of 32 cars. Load the <code>mtcars</code> data in <code>R</code> (just use <code>data(iris)</code> to load it to your working environment). Keep only the purely numeric variables (i.e.&nbsp;remove the two binary variables <code>vs</code> and <code>am</code>) and perform hierarchical clustering with different combinations of dissimilarity functions and linkage criteria. Plot dendrograms for some of the obtained cluster hierarchies and try to identify whether your partitions make sense for different numbers of clusters.</p>
 <p><em>(You may find it helpful to look at the car model names by typing <code>row.names(mtcars)</code>. Documentation for the data set is available by typing <code>?mtcars</code>).</em></p>
