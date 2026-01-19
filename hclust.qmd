@@ -25,7 +25,7 @@ The theory and implementations described below refer to agglomerative hierarchic
 
 We present the steps used to perform hierarchical agglomerative clustering below:
 
-1.  **Initialise:** Initialise $n$ clusters $C_1 = \{ \mathbf{x}_1\}, \ldots, C_n = \{\mathbf{x}_n\}$ and $t \leftarrow 1$.
+1.  **Initialise:** Initialise $n$ clusters $C_1 = \{ 1\}, \ldots, C_n = \{ n\}$ and $t \leftarrow 1$.
 2.  **Compute dissimilarities**: Construct dissimilarity/distance matrix $D^{(0)}$ with $D^{(0)}_{i,j} = d(\mathbf{x}_i, \mathbf{x}_j)$ for a dissimilarity/distance function $d$.
 3.  **Recursive steps:** Repeat the following steps until $t = n-1$:
 
@@ -114,7 +114,6 @@ hc <- hclust(d = dist_matrix,
 # Plot the hierarchy
 plot(hc, main = "Hierarchical Clustering of European Cities by Climate",
      xlab = "City", ylab = "Distance", sub = "")
-#rect.hclust(hc, k = 3, border = c("red", "blue", "darkgreen"))
 ```
 
 ::: funfact-box
@@ -200,7 +199,7 @@ As we can see, a height of 3 has returned a partition into $K=2$ clusters. In ge
 ::: think-note
 ❓ **Agglomerative vs. Divisive hierarchical clustering**
 
-Agglomerative clustering is sometimes referred to as a "bottom-up" approach, whereas the term "top-down" is used to describe divisive clustering. Can you explain why? Relate your answer to the denrogram and what it illustrates.
+Agglomerative clustering is sometimes referred to as a "bottom-up" approach, whereas the term "top-down" is used to describe divisive clustering. Can you explain why? Relate your answer to the dendrogram and what it illustrates.
 :::
 
 ::: {.practice-box}
