@@ -45,7 +45,7 @@ This is the standard triangle inequality for the Euclidean norm. $\square$
 
 ## The Manhattan distance
 
-**Definition (Manhattan distance on $\mathbb{R}^d$):** The Manhattan distance (also known as taxicab, city block, or rectilinear distance) between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
+**Definition (Manhattan distance on** $\mathbb{R}^d$): The Manhattan distance (also known as taxicab, city block, or rectilinear distance) between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
 d_T(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \|_T = \sum\limits_{j=1}^d \lvert x_j - y_j\rvert.
 $$ The Manhattan distance makes use of the so-called *Manhattan geometry*, where the distance between any two points is defined as the sum of the absolute differences of their Cartesian coordinates.
 
@@ -69,16 +69,20 @@ D. **Euclidean:** Green, **Manhattan:** Blue, Red Yellow\
 
 <summary>Show Answer</summary>
 
-**D.** **Euclidean:** Green, **Manhattan:** Blue, Red Yellow
+<!-- **D.** **Euclidean:** Green, **Manhattan:** Blue, Red Yellow
 
 Can you compute the Euclidean and Manhattan distances represented by each line?
+-->
+**Error 404: Answer not found.**
 
+*But seriously, think about it this way; if each square is a building and the lines are the roads,
+which of these routes could a taxi take?* 🚕
 </details>
 :::
 
 ## The Minkowski distance
 
-**Definition (Minkowski distance on $\mathbb{R}^d$):** The Minkowski distance between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
+**Definition (Minkowski distance on** $\mathbb{R}^d$): The Minkowski distance between two points $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ is defined as follows: $$
 d_M(\mathbf{x}, \mathbf{y}) = \| \mathbf{x} - \mathbf{y} \|_M = \left(\sum\limits_{j=1}^d \lvert x_j - y_j\rvert^p\right)^{\frac{1}{p}}, \quad p \geq 1.
 $$ You can see that the Minkowski distance is the Manhattan distance for $p=1$ and the Euclidean distance for $p=2$. The Minkowski distance is a generalisation of both!
 
@@ -135,10 +139,13 @@ E. $d(\mathbf{x}, \mathbf{y}) = \sqrt{\left(\mathbf{x} - \mathbf{y}\right)^\top 
 
 <summary>Show Answer</summary>
 
-**C. & E.**
+<!-- **C. & E.**
 
 Can you explain why the rest of the functions are not valid distances?
+-->
+**This answer is currently in an entangled quantum state with your understanding.**
 
+*Observe it too soon and you'll collapse the learning wave function.* ⚛️
 </details>
 :::
 
@@ -175,12 +182,58 @@ B. No\
 <details>
 
 <summary>Show Answer</summary>
+<!--
 
 **A. Yes**
 
 Can you explain why? Do you think that using this function to define similarities would be useful?
+-->
+**If I give you the answer now, what's the similarity between actual learning and just reading answers?** 
 
+*Exactly: $f(\text{similarity}) = 0$. Check back after class!* 😉 
 </details>
+:::
+
+## Computing distances in `R`
+
+The `dist` function provides an easy and quick way of computing distances (or dissimilarities) in `R`.
+The output is a distance/dissimilarity matrix, which you can also visualise! Below is a
+toy example with 50 randomly generated 2-dimensional vectors, where each component is drawn from a standard Uniform distribution.
+
+```{r}
+# Set the seed for reproducibility
+set.seed(123)
+
+# Generate 50 2D random vectors = 100 standard uniform values
+# Store in a 50 x 2 matrix
+X <- matrix(data = runif(n = 100, min = 0, max = 1),
+            nrow = 50,
+            ncol = 2)
+
+dist_mat <- dist(x = X, method = "euclidean")
+image(as.matrix(dist_mat, nrow = 50, ncol = 50))
+```
+The `image` function produces a heat map but notice how it requires an argument of class `matrix`.
+Therefore, we make sure to convert our distance matrix object to a `matrix` object and specify
+the number of rows and columns, which has to be equal to $n$.
+
+::: funfact-box
+💡 **Fun fact**
+
+The `dist` function supports several distance metrics. Explore its documentation by typing
+`?dist` on the console and see what other distance functions can be implemented, besides the Euclidean.
+How would you compute the dissimilarity matrix for a dissimilarity function that is not included in
+the documentation?
+:::
+
+::: {.practice-box}
+🚀 **Time to practice!**
+
+Generate some synthetic data (e.g. by sampling from a uniform or a Normal distribution) and
+use the `dist` function with any distance function of your choice. Repeat this process but
+keep increasing the number of dimensions. What do you observe?
+
+*(Hint: Use the `image` function to visualise the distance matrix each time)*.
 :::
 
 ## Key takeaways
@@ -190,3 +243,4 @@ Can you explain why? Do you think that using this function to define similaritie
 -   All distances are dissimilarities but not the other way round.
 -   The triangle inequality is what makes a dissimilarity function a proper distance function.
 -   Large distance/dissimilarity $\implies$ low similarity, while low distance/dissimilarity $\implies$ high similarity.
+-   The `dist` function in `R` can be used for computing a distance matrix.

@@ -100,3 +100,22 @@ div.callout-note {
   background-color: #E0FFE8 !important;
   border-left-color: #4caf50 !important;
 }
+
+.practice-box {
+  background-color: #d1e6ff !important;
+  border-left: 5px solid #0066cc !important;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.practice-box p:first-of-type {
+  display: inline;
+  margin: 0;
+}
+
+.practice-box p:first-of-type strong {
+  color: inherit; 
+  font-weight: bold;
+}

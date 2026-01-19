@@ -25,7 +25,7 @@ The theory and implementations described below refer to agglomerative hierarchic
 
 We present the steps used to perform hierarchical agglomerative clustering below:
 
-1.  **Initialise:** Initialise $n$ clusters $C_1 = \{ 1\}, \ldots, C_n = \{n\}$ and $t \leftarrow 1$.
+1.  **Initialise:** Initialise $n$ clusters $C_1 = \{ \mathbf{x}_1\}, \ldots, C_n = \{\mathbf{x}_n\}$ and $t \leftarrow 1$.
 2.  **Compute dissimilarities**: Construct dissimilarity/distance matrix $D^{(0)}$ with $D^{(0)}_{i,j} = d(\mathbf{x}_i, \mathbf{x}_j)$ for a dissimilarity/distance function $d$.
 3.  **Recursive steps:** Repeat the following steps until $t = n-1$:
 
@@ -39,7 +39,7 @@ We present the steps used to perform hierarchical agglomerative clustering below
 
 <!-- -->
 
-4.  **Output:** Cluster hierarchy.
+3.  **Output:** Cluster hierarchy.
 
 ::: funfact-box
 💡 **Fun fact**
@@ -58,21 +58,21 @@ Look at step 3ii. of the above implementation; what does it mean to compute diss
 One of the recursive steps of hierarchical agglomerative clustering involves constructing the matrix of dissimilarities so that an element $(i, j)$ represents the dissimilarity between clusters $C_i$ and $C_j$. However, clusters are (non-empty) sets of observations, so how can we apply a dissimilarity function on them? This can be done by specifying the dissimilarity of any two clusters as a function of the pairwise distances of observations included in these. This is precisely what a **linkage criterion** does! The table below displays some of the most commonly-used linkage criteria that can be used:
 
 | Linkage | Formula |
-|--|------|
-|Complete |$\max\limits_{\mathbf{x}_{i'} \in C_i, \mathbf{x}_{j'} \in C_j}d(\mathbf{x}_{i'}, \mathbf{x}_{j'})$|
-|Single |$\min\limits_{\mathbf{x}_{i'} \in C_i, \mathbf{x}_{j'} \in C_j}d(\mathbf{x}_{i'}, \mathbf{x}_{j'})$|
-|Average |$\frac{1}{\lvert C_i \rvert}\frac{1}{\lvert C_j \rvert}\sum\limits_{\mathbf{x}_{i'} \in C_i}\sum\limits_{\mathbf{x}_{j'} \in C_j} d(\mathbf{x}_{i'}, \mathbf{x}_{j'})$|
-|Ward |$\frac{\lvert C_i \rvert \lvert C_j \rvert}{\lvert C_i \cup C_j \rvert} \| \mathbf{m}_i - \mathbf{m}_j \|^2$, $\mathbf{m}_k$ is the centroid of cluster $C_k$|
-|Centroid |$\| \mathbf{m}_i - \mathbf{m}_j \|^2$, $\mathbf{m}_k$ is the centroid of cluster $C_k$|
+|--------------------|----------------------------------------------------|
+| Complete | $\max\limits_{\mathbf{x}_{i'} \in C_i, \mathbf{x}_{j'} \in C_j}d(\mathbf{x}_{i'}, \mathbf{x}_{j'})$ |
+| Single | $\min\limits_{\mathbf{x}_{i'} \in C_i, \mathbf{x}_{j'} \in C_j}d(\mathbf{x}_{i'}, \mathbf{x}_{j'})$ |
+| Average | $\frac{1}{\lvert C_i \rvert}\frac{1}{\lvert C_j \rvert}\sum\limits_{\mathbf{x}_{i'} \in C_i}\sum\limits_{\mathbf{x}_{j'} \in C_j} d(\mathbf{x}_{i'}, \mathbf{x}_{j'})$ |
+| Ward | $\frac{\lvert C_i \rvert \lvert C_j \rvert}{\lvert C_i \cup C_j \rvert} \| \mathbf{m}_i - \mathbf{m}_j \|^2$, $\mathbf{m}_k$ is the centroid of cluster $C_k$ |
+| Centroid | $\| \mathbf{m}_i - \mathbf{m}_j \|^2$, $\mathbf{m}_k$ is the centroid of cluster $C_k$ |
 
 : Linkage criteria
 
 ::: {.callout-note icon="false"}
 ## 🤔 Quiz: Let $C_1 = \{1, 2\}$ and $C_2 = \{3, 4\}$ , where:
+
 $$
 \mathbf{X} = \begin{pmatrix}0 & 0 \\ 1 & -2 \\ 5 & -1 \\ 2 & 2\end{pmatrix}.
-$$
-What is the dissimilarity between $C_1$ and $C_2$ using the Euclidean distance and the single linkage?
+$$ What is the dissimilarity between $C_1$ and $C_2$ using the Euclidean distance and the single linkage?
 
 A. $\sqrt{5}$\
 B. $\sqrt{8}$\
@@ -83,19 +83,18 @@ D. $\sqrt{26}$\
 
 <summary>Show Answer</summary>
 
-**B.** $\sqrt{8}$
+<!-- **B.** $\sqrt{8}$
 
 Try computing the dissimilarity between $C_1$ and $C_2$ using different linkage criteria. How does that change?
+--> 🧠 **The answer is currently updating its linkage criteria...**
 
+*Single linkage? Complete? Average? The answer is feeling indecisive. Check back after you've computed all four distances!*
 </details>
 :::
 
 ## Hierarchical Agglomerative Clustering in `R`
 
-Hierarchical agglomerative clustering is available in `R` using the `hclust` function. This takes a dissimilarity matrix and a linkage
-criterion as input arguments. Let us look at an example on a synthetic data set about climate in 10 European cities. The data includes
-the average temperature, annual precipitation and sunshine hours recorded over a year. We use agglomerative clustering with
-the Euclidean distance and complete linkage to obtain a cluster hierarchy. Notice that we can plot the hierarchy using `plot`.
+Hierarchical agglomerative clustering is available in `R` using the `hclust` function. This takes a dissimilarity matrix and a linkage criterion as input arguments. Let us look at an example on a synthetic data set about climate in 10 European cities. The data includes the average temperature, annual precipitation and sunshine hours recorded over a year. We use agglomerative clustering with the Euclidean distance and complete linkage to obtain a cluster hierarchy. Notice that we can plot the hierarchy using `plot`.
 
 ```{r}
 # Create data set of European cities with their climate characteristics
@@ -115,21 +114,19 @@ hc <- hclust(d = dist_matrix,
 # Plot the hierarchy
 plot(hc, main = "Hierarchical Clustering of European Cities by Climate",
      xlab = "City", ylab = "Distance", sub = "")
+#rect.hclust(hc, k = 3, border = c("red", "blue", "darkgreen"))
 ```
 
 ::: funfact-box
 💡 **Fun fact**
 
-The plot of hierarchies is called a **dendrogram** and comes from the Greek word "δένδρο" (*dendro*) which means "tree". Do you see why
-a tree diagram is used here?
+The plot of hierarchies is called a **dendrogram** and comes from the Greek word "δένδρο" (*dendro*) which means "tree". Do you see why a tree diagram is used here?
 :::
 
 ::: think-note
 ❓ **Scaled data?**
 
-Take a look at the line where the dissimilarity matrix is constructed: `dist_matrix <- dist(scale(cities))`. What does the `scale`
-function do? *(Hint: Type `?scale` in your console to get the function documentation)*.
-Do you understand why it is used?
+Take a look at the line where the dissimilarity matrix is constructed: `dist_matrix <- dist(scale(cities))`. What does the `scale` function do? *(Hint: Type `?scale` in your console to get the function documentation)*. Do you understand why it is used?
 :::
 
 The dendrogram above shows how the cluster hierarchy is formed. We can also inspect the output of our hierarchical clustering output `hc`.
@@ -140,9 +137,8 @@ str(hc)
 
 Two of the objects returned can help us understand how the clustering algorithm has proceeded:
 
-- `merge`: A matrix of dimensions $(n-1) \times 2$ that describes the merges done. Positive values indicate clusters obtained
-by previous merges.
-- `height`: A vector of the $n-1$ values describing the dissimilarity between the merged clusters at each merging step.
+-   `merge`: A matrix of dimensions $(n-1) \times 2$ that describes the merges done. Positive values indicate clusters obtained by previous merges.
+-   `height`: A vector of the $n-1$ values describing the dissimilarity between the merged clusters at each merging step.
 
 For instance, if we look at our data set, `merge` looks like this:
 
@@ -152,23 +148,23 @@ print(hc$merge)
 
 This tells us that the hierarchy was obtained as follows:
 
-Step 1:  $\{4\} \cup \{10\}$ → Cluster 1
+Step 1: $\{4\} \cup \{10\}$ → Cluster 1
 
-Step 2:  $\{3\} \cup \{9\}$  → Cluster 2 
+Step 2: $\{3\} \cup \{9\}$ → Cluster 2
 
-Step 3:  $\{6\} \cup \{7\}$  → Cluster 3
+Step 3: $\{6\} \cup \{7\}$ → Cluster 3
 
-Step 4:  $\{5\} \cup$ Cluster 1 → Cluster 4 ($\{4, 10, 5\}$)
+Step 4: $\{5\} \cup$ Cluster 1 → Cluster 4 ($\{4, 10, 5\}$)
 
-Step 5:  $\{1\} \cup \{8\}$  → Cluster 5
+Step 5: $\{1\} \cup \{8\}$ → Cluster 5
 
-Step 6:  $\{2\} \cup$ Cluster 5 → Cluster 6 ($\{1, 8, 2\}$)
+Step 6: $\{2\} \cup$ Cluster 5 → Cluster 6 ($\{1, 8, 2\}$)
 
-Step 7:  Cluster 2 + Cluster 4 → Cluster 7 ($\{3,9,4,10,5\}$)
+Step 7: Cluster 2 + Cluster 4 → Cluster 7 ($\{3,9,4,10,5\}$)
 
-Step 8:  Cluster 3 + Cluster 6 → Cluster 8 ($\{6,7,1,8,2\}$)
+Step 8: Cluster 3 + Cluster 6 → Cluster 8 ($\{6,7,1,8,2\}$)
 
-Step 9:  Cluster 7 + Cluster 8 → Final cluster ($\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10\}$)
+Step 9: Cluster 7 + Cluster 8 → Final cluster ($\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10\}$)
 
 The associated dissimilarities that led to these merges are:
 
@@ -182,12 +178,7 @@ print(hc$height)
 The values in `height` are always non-decreasing. Can you explain why?
 :::
 
-We now have our cluster hierarchy but how do we get access to the clusters? The idea is
-that we can "cut the tree" structure we got in the dendrogram and look at the clusters obtained.
-We can either cut at a specific height, or enforce a specific number of clusters. For instance,
-in the chunk below, we cut the tree into $K=3$ clusters and then we also cut it at a height of 3.
-Both actions can be performed using the `cutree` function. We can also visualise the obtained
-partitions on the dendrogram with `rect.hclust`.
+We now have our cluster hierarchy but how do we get access to the clusters? The idea is that we can "cut the tree" structure we got in the dendrogram and look at the clusters obtained. We can either cut at a specific height, or enforce a specific number of clusters. For instance, in the chunk below, we cut the tree into $K=3$ clusters and then we also cut it at a height of 3. Both actions can be performed using the `cutree` function. We can also visualise the obtained partitions on the dendrogram with `rect.hclust`.
 
 ```{r}
 # Cut to get 3 clusters
@@ -204,23 +195,18 @@ rect.hclust(hc, k = 3, border = c("red", "blue", "darkgreen"))
 rect.hclust(hc, h = 3, border = c("magenta", "orange"))
 ```
 
-As we can see, a height of 3 has returned a partition into $K=2$ clusters. In general, cutting a tree
-at a given height is not straightforward and requires inspecting the dendrogram in advance. This is why
-we normally prefer to cut in a way that allows specifying the number of clusters. Notice that cutting the
-tree at different heights may lead to the exact same partition in many cases.
+As we can see, a height of 3 has returned a partition into $K=2$ clusters. In general, cutting a tree at a given height is not straightforward and requires inspecting the dendrogram in advance. This is why we normally prefer to cut in a way that allows specifying the number of clusters. Notice that cutting the tree at different heights may lead to the exact same partition in many cases.
 
 ::: think-note
 ❓ **Agglomerative vs. Divisive hierarchical clustering**
 
-Agglomerative clustering is sometimes referred to as a "bottom-up" approach, whereas the term "top-down" is used to describe divisive clustering.
-Can you explain why? Relate your answer to the denrogram and what it illustrates.
+Agglomerative clustering is sometimes referred to as a "bottom-up" approach, whereas the term "top-down" is used to describe divisive clustering. Can you explain why? Relate your answer to the denrogram and what it illustrates.
 :::
 
-::: funfact-box
+::: {.practice-box}
 🚀 **Time to practice!**
 
-The mtcars data set includes eleven features related to the design and the performance of 32 cars. Load the `mtcars` data in `R` (just use `data(iris)` to load it to your working environment). Keep only the purely numeric variables (i.e. remove the two binary variables `vs` and `am`) and perform hierarchical clustering with different combinations of dissimilarity functions and linkage criteria. Plot dendrograms for some of the obtained cluster hierarchies and try to identify whether your partitions make sense for different
-numbers of clusters.
+The mtcars data set includes eleven features related to the design and the performance of 32 cars. Load the `mtcars` data in `R` (just use `data(iris)` to load it to your working environment). Keep only the purely numeric variables (i.e. remove the two binary variables `vs` and `am`) and perform hierarchical clustering with different combinations of dissimilarity functions and linkage criteria. Plot dendrograms for some of the obtained cluster hierarchies and try to identify whether your partitions make sense for different numbers of clusters.
 
 *(You may find it helpful to look at the car model names by typing `row.names(mtcars)`. Documentation for the data set is available by typing `?mtcars`).*
 :::
