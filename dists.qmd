@@ -211,7 +211,42 @@ X <- matrix(data = runif(n = 100, min = 0, max = 1),
             ncol = 2)
 
 dist_mat <- dist(x = X, method = "euclidean")
-image(as.matrix(dist_mat, nrow = 50, ncol = 50))
+dist_matrix <- as.matrix(dist_mat, nrow = nrow(X), ncol = ncol(X))
+
+# Create layout with space for legend
+layout(matrix(c(1, 2), nrow = 1), widths = c(4, 1))
+
+# Adjust margins for main plot (bottom, left, top, right)
+par(mar = c(5, 5, 4, 1))
+
+# Main plot with custom palette
+n_colors <- 256
+colors <- hcl.colors(n_colors, palette = "YlOrRd")
+
+image(x = 1:nrow(dist_matrix),
+      y = 1:ncol(dist_matrix),
+      z = dist_matrix,
+      col = colors,
+      xlab = "Observation",
+      ylab = "Observation",
+      main = "Euclidean Distance Matrix",
+      axes = FALSE)
+axis(1, at = seq(1, 50, by = 5))
+axis(2, at = seq(1, 50, by = 5), las = 1)
+box()
+
+# Color bar legend with matching colors
+par(mar = c(5, 1, 4, 4))
+legend_values <- seq(min(dist_matrix), max(dist_matrix), length.out = n_colors)
+image(x = 1, 
+      y = legend_values, 
+      z = matrix(legend_values, nrow = 1),
+      col = colors, 
+      axes = FALSE, 
+      xlab = "", 
+      ylab = "")
+axis(4, las = 1)
+mtext("Distance", side = 4, line = 2.5)
 ```
 The `image` function produces a heat map but notice how it requires an argument of class `matrix`.
 Therefore, we make sure to convert our distance matrix object to a `matrix` object and specify
