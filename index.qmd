@@ -59,7 +59,7 @@ in more depth:
 
 If you use these resources in your work, please cite as follows:
 
-> Costa, E. (2026). *A First Tutorial on Cluster Analysis* \[Course materials\]. TBC.
+> Costa, E. (2026). *A First Tutorial on Cluster Analysis* \[Course materials\]. https://efthymioscosta.github.io/m1r.ec1917/.
 
 ```         
 @online{costa2026clustering,
@@ -67,7 +67,7 @@ If you use these resources in your work, please cite as follows:
   title = {A {F}irst {T}utorial on {C}luster {A}nalysis},
   year = {2026},
   note = {[Course materials]},
-  url = {TBC}
+  url = {https://efthymioscosta.github.io/m1r.ec1917/}
 }
 ```
 
