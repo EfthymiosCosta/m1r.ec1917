@@ -165,7 +165,7 @@
     "href": "index.html#citation",
     "title": "A First Tutorial on Cluster Analysis",
     "section": "Citation",
-    "text": "Citation\nIf you use these resources in your work, please cite as follows:\n\nCosta, E. (2026). A First Tutorial on Cluster Analysis [Course materials]. TBC.\n\n@online{costa2026clustering,\n  author = {Efthymios Costa},\n  title = {A {F}irst {T}utorial on {C}luster {A}nalysis},\n  year = {2026},\n  note = {[Course materials]},\n  url = {TBC}\n}"
+    "text": "Citation\nIf you use these resources in your work, please cite as follows:\n\nCosta, E. (2026). A First Tutorial on Cluster Analysis [Course materials]. https://efthymioscosta.github.io/m1r.ec1917/.\n\n@online{costa2026clustering,\n  author = {Efthymios Costa},\n  title = {A {F}irst {T}utorial on {C}luster {A}nalysis},\n  year = {2026},\n  note = {[Course materials]},\n  url = {https://efthymioscosta.github.io/m1r.ec1917/}\n}"
   },
   {
     "objectID": "index.html#license",
