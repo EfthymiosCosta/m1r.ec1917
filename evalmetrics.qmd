@@ -90,7 +90,7 @@ $$
 with $d$ being the dissimilarity function used for clustering and denoting the cluster that observation $\mathbf{x}_{i'}$ is assigned to by $C_{k'}$.
 
 ::: think-note
-❓ **What do** $a(i)$ and $b(i)$ represent?
+❓ **What do $a(i)$ and $b(i)$ represent?**
 
 Can you explain $a(i)$ and $b(i)$ in simple words?
 :::
