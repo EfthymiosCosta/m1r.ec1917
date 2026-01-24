@@ -115,7 +115,7 @@ $$
 \text{BCSS} = \sum\limits_{k=1}^K \lvert C_k \rvert \| \mathbf{m}_k - \bar{\mathbf{x}} \|^2,\\
 \text{WCSS} = \sum\limits_{k=1}^K \sum\limits_{\mathbf{x}_i \in C_k} \| \mathbf{x}_i - \mathbf{m}_k \|^2,
 \end{align*}
-$$ with $\bar{\mathbf{x}} \|^2$ representing the overall mean vector of the whole data set.
+$$ with $\bar{\mathbf{x}}$ representing the overall mean vector of the whole data set.
 
 ::: think-note
 ❓ **How are these related to the K-Means objective?**
